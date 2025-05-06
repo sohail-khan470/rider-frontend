@@ -114,6 +114,16 @@ export const useCompanyStore = create<CompanyState & CompanyActions>()(
       }
     },
 
+    getCompanyByAdminId: async (id: number) => {
+      set({ loading: true, error: null });
+      try {
+        const response = await companyApi.getCompanyByAdminId(id);
+        set({ currentCompany: response.data, loading: false });
+      } catch (error) {
+        set({ error: "Error getting company" });
+      }
+    },
+
     logout: () => {
       localStorage.removeItem("authToken");
       set({

@@ -4,8 +4,9 @@ import { immer } from "zustand/middleware/immer";
 import { authApi } from "../api/endpoints/auth.api";
 import { AuthUser } from "../api/types/auth.types";
 import apiClient from "../api/client";
-
+import { jwtDecode } from "jwt-decode";
 import { AuthState, AuthActions } from "./types/auth.types";
+import { companyApi } from "../api/endpoints/company.api";
 
 export const useAuthStore = create<AuthState & AuthActions>()(
   immer((set, get) => ({
@@ -26,7 +27,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         const { admin, token } = response;
         localStorage.setItem("authToken", token);
         set({
-          user: { type: "superadmin", data: admin },
+          user: { type: "superAdmin", data: admin },
           token: token,
           loading: false,
         });
@@ -61,7 +62,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         localStorage.setItem("authToken", token);
         localStorage.setItem("companyId", company.id.toString());
         set({
-          user: { type: "company", data: company },
+          user: { type: "companyAdmin", data: company },
           loading: false,
         });
       } catch (error) {
@@ -83,7 +84,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         localStorage.setItem("authToken", token);
         localStorage.setItem("companyId", admin.companyId.toString());
         set({
-          user: { type: "company_admin", data: admin },
+          user: { type: "companyAdmin", data: admin },
           loading: false,
         });
       } catch (error) {
@@ -168,29 +169,19 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           },
         });
 
-        const user = response.data;
+        const role = response.data.role;
+        const user = response.data.admin;
+        let userType = "";
 
-        // Determine user type based on response
-        let userType: AuthUser["type"] = "customer"; // default
-        let userData = user;
+        console.log(role, "******&&&&&");
 
-        if (user.isSuperAdmin) {
-          userType = "superadmin";
-        } else if (user.isCompanyAdmin) {
-          userType = "company_admin";
-        } else if (user.isStaff) {
-          userType = "staff";
-        } else if (user.companyId) {
-          userType = "company";
+        if (role === "superAdmin") {
+          userType = "superAdmin";
+        } else if (role === "companyAdmin") {
+          userType = "companyAdmin";
         }
-
-        // Store companyId if exists
-        if (user.companyId) {
-          localStorage.setItem("companyId", user.companyId.toString());
-        }
-
         set({
-          user: { type: userType, data: userData },
+          user: { type: userType, data: user },
           token: token,
           initialized: true,
           loading: false,
@@ -198,6 +189,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       } catch (error) {
         console.error("Auth initialization error:", error);
         localStorage.removeItem("authToken");
+        localStorage.removeItem("role");
         localStorage.removeItem("companyId");
         set({
           user: null,
@@ -238,9 +230,13 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         const response = await authApi.adminLogin(email, password);
         const role = response.data.user.role;
         const token = response.data.token;
+        const decoded = jwtDecode(token) as any;
+        const data = { ...decoded };
+        console.log("***********role", data.id);
 
         localStorage.setItem("authToken", token);
-        localStorage.setItem("role", role);
+        localStorage.setItem("role", decoded.role);
+        localStorage.setItem("userId", decoded.id);
         set({
           user: response.data.user,
           role,

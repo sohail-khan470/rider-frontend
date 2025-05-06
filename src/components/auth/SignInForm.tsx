@@ -19,8 +19,8 @@ type FormErrors = {
 };
 
 export default function SignInForm() {
-  const { adminLogin, error, loading } = useAuthStore();
-  const navigate = useNavigate(); // Added navigate hook
+  const { adminLogin, error, loading, user, token } = useAuthStore(); // Added navigate hook
+  const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -40,14 +40,11 @@ export default function SignInForm() {
     }
   }, [error]);
 
-  // Add this useEffect to handle navigation after successful login
-  // useEffect(() => {
-  //   const token = localStorage.getItem("authToken");
-  //   if (token) {
-  //     navigate("/");
-  //   }
-  //   // no dependencies means this runs only once
-  // }, []);
+  useEffect(() => {
+    if (user) {
+      navigate("/"); // Redirect to homepage after successful login
+    }
+  }, [user, navigate]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

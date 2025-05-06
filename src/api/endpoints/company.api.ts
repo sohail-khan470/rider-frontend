@@ -68,4 +68,11 @@ export const companyApi = {
     });
     return response.data;
   },
+
+  getCompanyByAdminId: async (id: number) => {
+    const response = await apiClient.post("/api/company/admin", {
+      adminId: id,
+    });
+    return response.data;
+  },
 };

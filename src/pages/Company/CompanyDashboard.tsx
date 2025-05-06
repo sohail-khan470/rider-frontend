@@ -1,5 +1,17 @@
 import PageMeta from "../../components/common/PageMeta";
 import { Outlet } from "react-router";
+import { useCompanyStore } from "../../stores";
+import { Company } from "../../api/types/company.types";
+
+interface ExtendedCompany extends Company {
+  admin?: {
+    name: string;
+    email: string;
+  };
+  customers?: any[];
+  drivers?: any[];
+  staff?: any[];
+}
 
 const DashboardCard = ({
   title,
@@ -28,21 +40,26 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => (
 );
 
 export default function CompanyDashboard() {
-  const totalDrivers = 45;
-  const totalCars = 20;
+  const currentCompany = useCompanyStore().currentCompany as ExtendedCompany;
+
+  // Extract data from currentCompany
   const admin = {
-    name: "John Doe",
-    email: "admin@example.com",
-    role: "Company Admin",
+    name: currentCompany?.admin?.name || "N/A",
+    email: currentCompany?.admin?.email || "N/A",
+    role: "Company Admin", // You might want to get this from staff[0].role if available
   };
+
   const company = {
-    name: "FastRide Pvt Ltd",
-    address: "123 Street, City, Country",
-    contact: "+1 123-456-7890",
-    description:
-      "FastRide is a premium ride-sharing company providing safe and reliable transportation services.",
-    logoUrl: "/images/company-logo.png", // optional
+    name: currentCompany?.name || "N/A",
+    email: currentCompany?.email || "N/A",
+    timezone: currentCompany?.timezone || "N/A",
+    isApproved: currentCompany?.isApproved ? "Yes" : "No",
   };
+
+  // Counts from arrays
+  const totalCustomers = currentCompany?.customers?.length || 0;
+  const totalDrivers = currentCompany?.drivers?.length || 0;
+  const totalStaff = currentCompany?.staff?.length || 0;
 
   return (
     <>
@@ -58,28 +75,27 @@ export default function CompanyDashboard() {
             {company.name}
           </h1>
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            {company.address}
+            Email: {company.email}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            {company.contact}
+            Timezone: {company.timezone}
+          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            Approved: {company.isApproved}
           </p>
         </div>
-        {company.logoUrl && (
-          <img
-            src={company.logoUrl}
-            alt="Company Logo"
-            className="w-20 h-20 rounded-full object-cover mt-4 sm:mt-0"
-          />
-        )}
       </div>
 
       {/* Summary */}
       <div className="grid grid-cols-12 gap-4 md:gap-6 mb-6">
         <div className="col-span-12 md:col-span-6 xl:col-span-3">
+          <DashboardCard title="Total Customers" value={totalCustomers} />
+        </div>
+        <div className="col-span-12 md:col-span-6 xl:col-span-3">
           <DashboardCard title="Total Drivers" value={totalDrivers} />
         </div>
         <div className="col-span-12 md:col-span-6 xl:col-span-3">
-          <DashboardCard title="Total Cars" value={totalCars} />
+          <DashboardCard title="Total Staff" value={totalStaff} />
         </div>
       </div>
 
@@ -96,9 +112,9 @@ export default function CompanyDashboard() {
           Company Details
         </h2>
         <DetailRow label="Company Name" value={company.name} />
-        <DetailRow label="Address" value={company.address} />
-        <DetailRow label="Contact" value={company.contact} />
-        <DetailRow label="Description" value={company.description} />
+        <DetailRow label="Email" value={company.email} />
+        <DetailRow label="Timezone" value={company.timezone} />
+        <DetailRow label="Approved" value={company.isApproved} />
       </div>
       <div className="mt-6">
         <Outlet />

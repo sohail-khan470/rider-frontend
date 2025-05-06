@@ -52,9 +52,9 @@ export interface Customer {
   updatedAt?: string;
 }
 
-export type AuthUser =
-  | { type: "superadmin"; data: SuperAdmin }
-  | { type: "company"; data: Company }
-  | { type: "company_admin"; data: CompanyAdmin }
-  | { type: "staff"; data: Staff }
-  | { type: "customer"; data: Customer };
+export type AuthUser = any;
+// | { type: "superAdmin"; data: SuperAdmin }
+// | { type: "company"; data: Company }
+// | { type: "companyAdmin"; data: CompanyAdmin }
+// | { type: "staff"; data: Staff }
+// | { type: "customer"; data: Customer };
