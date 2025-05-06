@@ -15,16 +15,31 @@ import CompanyDashboard from "../pages/Company/CompanyDashboard";
 import BookingManagement from "../pages/BookingManagement/BookingManagement";
 import StaffManagement from "../pages/StaffManagement/StaffManagement";
 import CompanySettings from "../pages/Company/CompanySettings";
+import PublicRoute from "./PublicRoute";
 
 export const RouterConfig = () => {
   return (
     <Routes>
       {/* Public Routes */}
+      import PublicRoute from "./PublicRoute";
       <Route element={<AuthLayout />}>
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route
+          path="/signin"
+          element={
+            <PublicRoute>
+              <SignIn />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <SignUp />
+            </PublicRoute>
+          }
+        />
       </Route>
-
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
         {/* SuperAdmin Routes */}
@@ -48,7 +63,6 @@ export const RouterConfig = () => {
           </Route>
         </Route>
       </Route>
-
       {/* Fallback */}
       <Route path="*" element={<NotFound />} />
     </Routes>
