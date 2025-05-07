@@ -21,7 +21,6 @@ export const RouterConfig = () => {
   return (
     <Routes>
       {/* Public Routes */}
-      import PublicRoute from "./PublicRoute";
       <Route element={<AuthLayout />}>
         <Route
           path="/signin"
@@ -43,7 +42,7 @@ export const RouterConfig = () => {
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
         {/* SuperAdmin Routes */}
-        <Route element={<RoleRoute allowedRoles={["superAdmin"]} />}>
+        <Route element={<RoleRoute type={["super_admin"]} />}>
           <Route element={<AppLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/calendar" element={<Calendar />} />
@@ -53,7 +52,7 @@ export const RouterConfig = () => {
         </Route>
 
         {/* Company Admin Routes */}
-        <Route element={<RoleRoute allowedRoles={["companyAdmin"]} />}>
+        <Route element={<RoleRoute type={["user"]} />}>
           <Route element={<AppLayout />}>
             <Route path="/company/home" element={<CompanyDashboard />} />
             <Route path="/profile" element={<UserProfiles />} />

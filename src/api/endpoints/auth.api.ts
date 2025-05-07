@@ -6,33 +6,9 @@ import { Company } from "../types/company.types";
 import { CompanyAdmin } from "../types/company-admin.types";
 import { Staff } from "../types/staff.types";
 import { Customer } from "../types/customer.types";
-import { AuthResponse } from "../types/auth.types";
-
-// import {
-//   SuperAdmin,
-//   Company,
-//   CompanyAdmin,
-//   Staff,
-//   Customer,
-// } from "../types/auth.types";
 
 export const authApi = {
-  // Super Admin Auth
-  superAdminLogin: async (
-    email: string,
-    password: string
-  ): Promise<{ admin: SuperAdmin; token: string }> => {
-    const response = await apiClient.post("/super-admin/login", {
-      email,
-      password,
-    });
-    return response.data;
-  },
-
-  adminLogin: async (
-    email: string,
-    password: string
-  ): Promise<AuthResponse> => {
+  login: async (email: string, password: string): Promise<any> => {
     const response = await apiClient.post("/auth/login", {
       email,
       password,
@@ -53,33 +29,12 @@ export const authApi = {
     return response.data;
   },
 
-  companyLogin: async (
-    email: string,
-    password: string
-  ): Promise<{ company: Company; token: string }> => {
-    const response = await apiClient.post("/companies/login", {
-      email,
-      password,
-    });
-    return response.data;
-  },
-
   companyProfile: async (): Promise<Company> => {
     const response = await apiClient.get("/companies/me");
     return response.data;
   },
 
   // Company Admin Auth
-  companyAdminLogin: async (
-    email: string,
-    password: string
-  ): Promise<{ admin: CompanyAdmin; token: string }> => {
-    const response = await apiClient.post("/company-admins/login", {
-      email,
-      password,
-    });
-    return response.data;
-  },
 
   companyAdminProfile: async (): Promise<CompanyAdmin> => {
     const response = await apiClient.get("/company-admins/me");
@@ -87,13 +42,6 @@ export const authApi = {
   },
 
   // Staff Auth
-  staffLogin: async (
-    email: string,
-    password: string
-  ): Promise<{ staff: Staff; token: string }> => {
-    const response = await apiClient.post("/staff/login", { email, password });
-    return response.data;
-  },
 
   staffProfile: async (): Promise<Staff> => {
     const response = await apiClient.get("/staff/me");

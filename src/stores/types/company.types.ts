@@ -36,7 +36,6 @@ export interface CompanyActions {
   createCompanyAdmin: (
     adminData: Omit<CompanyAdmin, "id" | "companyId">
   ) => Promise<void>;
-  loginCompanyAdmin: (email: string, password: string) => Promise<void>;
   getCompanyAdmin: () => Promise<void>;
   fetchAllCompanies: () => Promise<void>;
   getCompanyByAdminId: (id: number) => Promise<void>;

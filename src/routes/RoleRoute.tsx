@@ -1,10 +1,10 @@
 // routes/RoleRoute.tsx
 import { Navigate, Outlet } from "react-router-dom";
 
-const RoleRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
-  const userRole = localStorage.getItem("role");
+const RoleRoute = ({ type }: { type: string[] }) => {
+  const userType = localStorage.getItem("type");
 
-  if (allowedRoles.includes(userRole || "")) {
+  if (type.includes(userType || "")) {
     return <Outlet />;
   } else {
     return <Navigate to="/signin" replace />;

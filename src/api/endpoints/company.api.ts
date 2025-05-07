@@ -58,17 +58,6 @@ export const companyApi = {
     return response.data;
   },
 
-  adminLogin: async (
-    email: string,
-    password: string
-  ): Promise<{ admin: CompanyAdmin; token: string }> => {
-    const response = await apiClient.post("/companies/admins/login", {
-      email,
-      password,
-    });
-    return response.data;
-  },
-
   getCompanyByAdminId: async (id: number) => {
     const response = await apiClient.post("/api/company/admin", {
       adminId: id,
