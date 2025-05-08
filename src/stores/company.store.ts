@@ -131,6 +131,18 @@ export const useCompanyStore = create<CompanyState & CompanyActions>()(
           companyAdmin: null,
         });
       },
+
+      getCompanyById: async (id: number) => {
+        console.log("$$$$$$$$$");
+        set({ loading: true, error: null });
+        try {
+          const response = await companyApi.getCompanyById(id);
+          console.log(response.data);
+          set({ currentCompany: response.data, loading: false });
+        } catch (error) {
+          set({ error: "Error getting company", loading: false });
+        }
+      },
     })),
     {
       name: "company-store", // Key in localStorage

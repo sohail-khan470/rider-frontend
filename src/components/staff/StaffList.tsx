@@ -1,68 +1,45 @@
-import { useState } from "react";
-import RoleSelector from "./RoleSelector";
+import { useStaffStore } from "../../stores/staff.store";
 
-// types.ts
-export interface Staff {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
+// components/staff/StaffList.tsx
+import { Staff } from "../../stores/types/staff.types";
+
+interface StaffListProps {
+  staff: Staff[] | any;
+  onSelectStaff: (staff: Staff) => void;
 }
 
-const staffMembers: Staff[] = [
-  {
-    id: "S001",
-    name: "John Doe",
-    email: "john@example.com",
-    role: "dispatcher",
-  },
-  {
-    id: "S002",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    role: "support",
-  },
-];
-
-export default function StaffList() {
-  const [staff, setStaff] = useState(staffMembers);
-
-  const updateRole = (id: string, newRole: string) => {
-    setStaff((prev) =>
-      prev.map((member) =>
-        member.id === id ? { ...member, role: newRole } : member
-      )
-    );
-  };
+export default function StaffList({ onSelectStaff }: StaffListProps) {
+  const { staff } = useStaffStore();
+  console.log("staff", staff);
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+    <div className="mt-6">
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
         Staff Members
       </h2>
-      <ul className="space-y-3">
-        {staff.map((member) => (
-          <li
-            key={member.id}
-            className="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-4 rounded-lg"
+      <div className="space-y-4">
+        {staff.map((staffMember: any) => (
+          <div
+            key={staffMember.id}
+            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+            onClick={() => onSelectStaff(staffMember)}
           >
-            <div>
-              <p className="text-lg font-semibold text-gray-800 dark:text-white">
-                {member.name}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {member.email}
-              </p>
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="font-medium text-gray-900 dark:text-white">
+                  {staffMember.name}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {staffMember.email}
+                </p>
+              </div>
+              <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
+                {staffMember.roleId}
+              </span>
             </div>
-            <div className="flex items-center space-x-3">
-              <RoleSelector
-                currentRole={member.role}
-                onChange={(newRole) => updateRole(member.id, newRole)}
-              />
-            </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

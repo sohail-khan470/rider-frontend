@@ -23,4 +23,9 @@ export const superAdminApi = {
     const response = await apiClient.patch("/super-admin/me", updates);
     return response.data;
   },
+
+  getStatistics: async (): Promise<any> => {
+    const response = await apiClient.get("/super-admin/stats");
+    return response.data;
+  },
 };

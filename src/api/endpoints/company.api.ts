@@ -64,4 +64,9 @@ export const companyApi = {
     });
     return response.data;
   },
+
+  getCompanyById: async (id: number) => {
+    const response = await apiClient.get(`/api/company/${id}`);
+    return response.data;
+  },
 };

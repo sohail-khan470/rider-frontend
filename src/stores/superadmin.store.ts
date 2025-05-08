@@ -8,6 +8,7 @@ type SuperAdminState = {
   superAdmin: SuperAdmin | null;
   loading: boolean;
   error: string | null;
+  statistics: any;
 };
 
 type SuperAdminActions = {
@@ -15,6 +16,7 @@ type SuperAdminActions = {
   getProfile: () => Promise<void>;
   updateProfile: (updates: Partial<SuperAdmin>) => Promise<void>;
   logout: () => void;
+  getStatistics: () => any;
 };
 
 export const useSuperAdminStore = create<SuperAdminState & SuperAdminActions>()(
@@ -22,6 +24,7 @@ export const useSuperAdminStore = create<SuperAdminState & SuperAdminActions>()(
     superAdmin: null,
     loading: false,
     error: null,
+    statistics: null,
 
     login: async (email, password) => {
       set({ loading: true, error: null });
@@ -57,6 +60,19 @@ export const useSuperAdminStore = create<SuperAdminState & SuperAdminActions>()(
     logout: () => {
       localStorage.removeItem("authToken");
       set({ superAdmin: null });
+    },
+
+    getStatistics: async () => {
+      set({ loading: true, error: null });
+      try {
+        const response = await superAdminApi.getStatistics();
+        set({ statistics: response.data, loading: false });
+      } catch (error) {
+        set({
+          error: "Error getting data",
+          loading: false,
+        });
+      }
     },
   }))
 );

@@ -1,8 +1,19 @@
+// pages/staff-management.tsx
+import { useEffect } from "react";
 import PageMeta from "../../components/common/PageMeta";
-import AddUpdateStaffForm from "../../components/staff/StaffForm";
+import AddStaffForm from "../../components/staff/StaffForm";
 import StaffList from "../../components/staff/StaffList";
+import { useStaffStore } from "../../stores/staff.store";
 
 export default function StaffManagement() {
+  const { fetchStaff, staff } = useStaffStore();
+
+  console.log(staff);
+
+  useEffect(() => {
+    fetchStaff();
+  }, []);
+
   return (
     <>
       <PageMeta
@@ -15,7 +26,7 @@ export default function StaffManagement() {
           Role & Staff Management
         </h1>
 
-        <AddUpdateStaffForm />
+        <AddStaffForm />
         <StaffList />
       </div>
     </>

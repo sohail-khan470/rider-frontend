@@ -39,5 +39,6 @@ export interface CompanyActions {
   getCompanyAdmin: () => Promise<void>;
   fetchAllCompanies: () => Promise<void>;
   getCompanyByAdminId: (id: number) => Promise<void>;
+  getCompanyById: (id: number) => Promise<void>;
   logout: () => void;
 }

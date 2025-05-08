@@ -5,8 +5,9 @@ import { Staff, StaffRole } from "../types/staff.types";
 
 export const staffApi = {
   // Company endpoints
-  getCompanyStaff: async (): Promise<Staff[]> => {
-    const response = await apiClient.get("/companies/staff");
+  getCompanyStaff: async (companyId: number): Promise<Staff[]> => {
+    const response = await apiClient.get(`/api/company/${companyId}/users`);
+    console.log(response, "^^^^^^^^^^^^");
     return response.data;
   },
 
@@ -54,6 +55,12 @@ export const staffApi = {
 
   createRole: async (name: string): Promise<StaffRole> => {
     const response = await apiClient.post("/staff/roles", { name });
+    return response.data;
+  },
+
+  getAdmin: async (companyId: number): Promise<Staff> => {
+    const response = await apiClient.get(`/api/users/admins/${companyId}`);
+    console.log(response, "^^^^^^^^^^^^");
     return response.data;
   },
 };

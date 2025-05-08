@@ -8,3 +8,4 @@ export { useDriverStore } from "./driver.store";
 export { useCustomerStore } from "./customer.store";
 export { useBookingStore } from "./booking.store";
 export { useLocationStore } from "./location.store";
+export { useStaffStore } from "./staff.store";

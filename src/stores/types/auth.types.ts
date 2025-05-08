@@ -12,6 +12,7 @@ export interface AuthState {
 
 export interface AuthActions {
   login: (email: string, password: string) => Promise<void>;
+  initialize: () => void;
 
   // Common
   // initializeAuth: () => Promise<void>;
