@@ -81,4 +81,9 @@ export const authApi = {
     const response = await apiClient.post("/refresh-token");
     return response.data;
   },
+
+  getUserProfile: async () => {
+    const response = await apiClient.get("/auth/me");
+    return response;
+  },
 };

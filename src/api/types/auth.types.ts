@@ -36,7 +36,7 @@ export interface Staff {
   name: string;
   email: string;
   password: string;
-  roleId: number;
+  roleId: number | string;
   companyId: number;
   createdAt: string;
   updatedAt: string;

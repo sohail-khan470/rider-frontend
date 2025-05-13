@@ -9,3 +9,4 @@ export { useCustomerStore } from "./customer.store";
 export { useBookingStore } from "./booking.store";
 export { useLocationStore } from "./location.store";
 export { useStaffStore } from "./staff.store";
+export { useRoleStore } from "./role.store";

@@ -6,14 +6,33 @@ export type BookingStatus =
   | "completed"
   | "cancelled";
 
-export interface Booking {
+// export interface Booking {
+//   id: number;
+//   customerId: number;
+//   driverId?: number;
+//   companyId: number;
+//   pickup: string;
+//   dropoff: string;
+//   status: BookingStatus;
+//   fare?: number;
+//   requestedAt: string;
+// }
+export type Booking = {
   id: number;
-  customerId: number;
-  driverId?: number;
   companyId: number;
+  customer: {
+    id: number;
+    name: string;
+    phone: string;
+  };
+  driver?: {
+    id: number;
+    name: string;
+    vehicleInfo: string;
+  };
   pickup: string;
   dropoff: string;
+  fare: number | null;
   status: BookingStatus;
-  fare?: number;
   requestedAt: string;
-}
+};

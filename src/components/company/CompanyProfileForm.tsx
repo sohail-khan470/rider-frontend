@@ -21,7 +21,7 @@ export default function CompanyProfileForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Send `company` data to backend via API
-    console.log("Submitting company profile:", company);
+
     alert("Company profile updated successfully!");
   };
 

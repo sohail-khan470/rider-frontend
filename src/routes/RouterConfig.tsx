@@ -52,7 +52,7 @@ export const RouterConfig = () => {
         </Route>
 
         {/* Company Admin Routes */}
-        <Route element={<RoleRoute type={["user"]} />}>
+        <Route element={<RoleRoute type={["admin"]} />}>
           <Route element={<AppLayout />}>
             <Route path="/company/home" element={<CompanyDashboard />} />
             <Route path="/profile" element={<UserProfiles />} />

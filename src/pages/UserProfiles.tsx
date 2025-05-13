@@ -3,8 +3,18 @@ import UserMetaCard from "../components/UserProfile/UserMetaCard";
 import UserInfoCard from "../components/UserProfile/UserInfoCard";
 import UserAddressCard from "../components/UserProfile/UserAddressCard";
 import PageMeta from "../components/common/PageMeta";
+import { useAuthStore } from "../stores";
+import { useEffect } from "react";
 
 export default function UserProfiles() {
+  const { user, getUserProfile } = useAuthStore();
+
+  useEffect(() => {
+    getUserProfile();
+  }, []);
+
+  console.log(user, "VVVVVVVVVVVV");
+
   return (
     <>
       <PageMeta

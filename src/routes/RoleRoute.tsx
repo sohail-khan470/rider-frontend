@@ -2,9 +2,9 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 const RoleRoute = ({ type }: { type: string[] }) => {
-  const userType = localStorage.getItem("type");
+  const userRole = localStorage.getItem("role");
 
-  if (type.includes(userType || "")) {
+  if (type.includes(userRole || "")) {
     return <Outlet />;
   } else {
     return <Navigate to="/signin" replace />;

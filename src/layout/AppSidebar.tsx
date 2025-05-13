@@ -85,8 +85,7 @@ const AppSidebar: React.FC = () => {
     const checkUser = () => {
       const isSuperAdmin = localStorage.getItem("role") === "superAdmin";
       const role = localStorage.getItem("role");
-      console.log(role);
-      console.log(isSuperAdmin);
+
       setCurrentNavItems(isSuperAdmin ? superAdminItems : companyAdminItems);
     };
 

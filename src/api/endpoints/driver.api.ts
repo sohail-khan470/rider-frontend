@@ -1,80 +1,128 @@
-// src/api/endpoints/driver.api.ts
-import { DriverResponse } from "../../stores/types/driver.types";
 import apiClient from "../client";
-
 import {
   Driver,
-  DriverStatus,
+  DriverLocation,
   DriverAvailability,
-} from "../types/driver.types";
+} from "../../stores/types/driver.types";
 
 export const driverApi = {
-  // Company endpoints
-  getCompanyDrivers: async (): Promise<Driver[]> => {
-    const response = await apiClient.get("/api/companies/drivers");
+  // Driver CRUD operations
+  createDriver: async (
+    driverData: Omit<Driver, "id" | "createdAt" | "updatedAt">
+  ): Promise<Driver> => {
+    const response = await apiClient.post("/drivers", driverData);
     return response.data;
   },
 
-  createDriver: async (
-    driverData: Omit<Driver, "id" | "createdAt" | "updatedAt" | "status">
-  ): Promise<Driver> => {
-    const response = await apiClient.post("/api/company/drivers", driverData);
+  getAllDrivers: async (filters = {}, pagination = { skip: 0, take: 10 }) => {
+    const queryParams = new URLSearchParams();
+
+    // Add pagination parameters
+    queryParams.append("skip", pagination.skip.toString());
+    queryParams.append("take", pagination.take.toString());
+
+    // Add filter parameters
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        queryParams.append(key, value.toString());
+      }
+    });
+
+    const response = await apiClient.get(`/drivers?${queryParams.toString()}`);
+    return response.data;
+  },
+
+  getDriverById: async (id: number): Promise<Driver> => {
+    const response = await apiClient.get(`/drivers/${id}`);
     return response.data;
   },
 
   updateDriver: async (
-    driverId: number,
+    id: number,
     updates: Partial<Driver>
   ): Promise<Driver> => {
-    const response = await apiClient.patch(
-      `/companies/drivers/${driverId}`,
-      updates
+    const response = await apiClient.patch(`/drivers/${id}`, updates);
+    return response.data;
+  },
+
+  deleteDriver: async (id: number): Promise<void> => {
+    await apiClient.delete(`/drivers/${id}`);
+  },
+
+  // Driver status management
+  updateDriverStatus: async (
+    id: number,
+    status: "offline" | "online" | "on_trip"
+  ): Promise<Driver> => {
+    const response = await apiClient.patch(`/drivers/${id}/status`, { status });
+    return response.data;
+  },
+
+  // Driver location management
+  updateDriverLocation: async (
+    id: number,
+    location: { lat: number; lng: number }
+  ): Promise<DriverLocation> => {
+    const response = await apiClient.patch(`/drivers/${id}/location`, location);
+    return response.data;
+  },
+
+  getNearbyDrivers: async (
+    lat: number,
+    lng: number,
+    radius = 5,
+    companyId = null
+  ): Promise<Driver[]> => {
+    const queryParams = new URLSearchParams({
+      lat: lat.toString(),
+      lng: lng.toString(),
+      radius: radius.toString(),
+    });
+
+    if (companyId) {
+      queryParams.append("companyId", companyId.toString());
+    }
+
+    const response = await apiClient.get(
+      `/drivers/nearby?${queryParams.toString()}`
     );
     return response.data;
   },
 
-  deleteDriver: async (driverId: number): Promise<void> => {
-    await apiClient.delete(`/api/company/drivers/${driverId}`);
-  },
-
-  // Driver endpoints
-  getDriverProfile: async (): Promise<Driver> => {
-    const response = await apiClient.get("/api/drivers/me");
+  // Driver availability management
+  addDriverAvailability: async (
+    data: Omit<DriverAvailability, "id">
+  ): Promise<DriverAvailability> => {
+    const response = await apiClient.post("/drivers/availability", data);
     return response.data;
   },
 
-  updateStatus: async (status: DriverStatus): Promise<Driver> => {
-    const response = await apiClient.patch("/api/drivers/status", { status });
-    return response.data;
+  removeDriverAvailability: async (id: number): Promise<void> => {
+    await apiClient.delete(`/drivers/availability/${id}`);
   },
 
-  updateLocation: async (location: {
-    lat: number;
-    lng: number;
-  }): Promise<Location> => {
-    const response = await apiClient.post("/drivers/location", location);
-    return response.data;
-  },
+  // Company specific driver operations
+  getCompanyDrivers: async (
+    companyId: number,
+    filters = {},
+    pagination = { skip: 0, take: 10 }
+  ) => {
+    const queryParams = new URLSearchParams();
 
-  // Availability
-  setAvailability: async (availability: {
-    startTime: string;
-    endTime: string;
-  }): Promise<DriverAvailability> => {
-    const response = await apiClient.post(
-      "/drivers/availability",
-      availability
+    // Add pagination parameters
+    queryParams.append("skip", pagination.skip.toString());
+    queryParams.append("take", pagination.take.toString());
+
+    // Add filter parameters
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        queryParams.append(key, value.toString());
+      }
+    });
+
+    const response = await apiClient.get(
+      `/companies/${companyId}/drivers?${queryParams.toString()}`
     );
-    return response.data;
-  },
-
-  getAvailabilities: async (): Promise<DriverAvailability[]> => {
-    const response = await apiClient.get("/drivers/availability");
-    return response.data;
-  },
-
-  getAllDrivers: async (): Promise<DriverResponse> => {
-    const response = await apiClient.get("/api/drivers/getAll");
     return response.data;
   },
 };

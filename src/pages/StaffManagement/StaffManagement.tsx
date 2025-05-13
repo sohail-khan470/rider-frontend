@@ -1,34 +1,22 @@
-// pages/staff-management.tsx
 import { useEffect } from "react";
-import PageMeta from "../../components/common/PageMeta";
-import AddStaffForm from "../../components/staff/StaffForm";
 import StaffList from "../../components/staff/StaffList";
-import { useStaffStore } from "../../stores/staff.store";
+import { AddStaffModal } from "../../components/modals/AddStaffModal";
+import { useStaffStore } from "../../stores";
 
-export default function StaffManagement() {
-  const { fetchStaff, staff } = useStaffStore();
-
-  console.log(staff);
+export default function StaffPage() {
+  const { staff, fetchStaff } = useStaffStore();
 
   useEffect(() => {
     fetchStaff();
-  }, []);
+  }, [fetchStaff]);
 
   return (
-    <>
-      <PageMeta
-        title="Role & Staff Management | Company Dashboard"
-        description="Manage company staff, assign roles like dispatcher, support, and more."
-      />
-
-      <div className="p-6 bg-white dark:bg-gray-900 rounded-xl shadow-md">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          Role & Staff Management
-        </h1>
-
-        <AddStaffForm />
-        <StaffList />
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Staff Management</h1>
+        <AddStaffModal />
       </div>
-    </>
+      <StaffList />
+    </div>
   );
 }

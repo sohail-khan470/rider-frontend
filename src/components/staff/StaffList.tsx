@@ -1,45 +1,91 @@
-import { useStaffStore } from "../../stores/staff.store";
+import { PencilIcon } from "@heroicons/react/24/outline";
+import StaffFormModal from "./StaffFormModal";
+import { useStaffStore } from "../../stores";
+import { useState } from "react";
+import { staffApi } from "../../api/endpoints/staffApi";
+import { Staff, StaffFormValues } from "./types";
+//import { useStaffStore } from "../stores/staffStore";
 
-// components/staff/StaffList.tsx
-import { Staff } from "../../stores/types/staff.types";
+export default function StaffList() {
+  const {
+    staff,
+    selectedStaff,
+    selectStaff,
+    clearSelectedStaff,
+    fetchStaff,
+    updateStaff,
+  } = useStaffStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-interface StaffListProps {
-  staff: Staff[] | any;
-  onSelectStaff: (staff: Staff) => void;
-}
+  const handleEdit = (staff: Staff) => {
+    selectStaff(staff);
+    setIsModalOpen(true);
+  };
 
-export default function StaffList({ onSelectStaff }: StaffListProps) {
-  const { staff } = useStaffStore();
-  console.log("staff", staff);
+  const handleUpdate = async (id: number, data: StaffFormValues) => {
+    try {
+      await staffApi.updateStaff(id, data);
+      updateStaff(id, data);
+      fetchStaff(); // Refresh the list
+    } catch (error) {
+      console.error("Error updating staff:", error);
+      throw error;
+    }
+  };
 
   return (
-    <div className="mt-6">
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-        Staff Members
-      </h2>
-      <div className="space-y-4">
-        {staff.map((staffMember: any) => (
-          <div
-            key={staffMember.id}
-            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
-            onClick={() => onSelectStaff(staffMember)}
-          >
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="font-medium text-gray-900 dark:text-white">
-                  {staffMember.name}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  {staffMember.email}
-                </p>
-              </div>
-              <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
-                {staffMember.roleId}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Name
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Email
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Role
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {staff.map((staffMember) => (
+            <tr key={staffMember.id}>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                {staffMember.name}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {staffMember.email}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
+                {staffMember.role.name.replace("_", " ")}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button
+                  onClick={() => handleEdit(staffMember)}
+                  className="text-indigo-600 hover:text-indigo-900"
+                >
+                  <PencilIcon className="h-5 w-5" />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <StaffFormModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          clearSelectedStaff();
+        }}
+        staff={selectedStaff}
+        onSubmit={handleUpdate}
+      />
     </div>
   );
 }

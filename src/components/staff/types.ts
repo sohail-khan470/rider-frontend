@@ -3,6 +3,7 @@ export interface Staff {
   name: string;
   email: string;
   role: {
+    id: number | string;
     name: string;
     permissions?: {
       permission: {
@@ -17,13 +18,7 @@ export interface Staff {
 export interface StaffFormValues {
   name: string;
   email: string;
-  roleId: string | number;
-}
-
-export interface CreateStaff {
-  name: string;
-  email: string;
-  roleId: number | string;
-  companyId: number | string;
   password: string;
+  roleId: string | number;
+  companyId: string | number;
 }

@@ -1,140 +1,296 @@
-// src/stores/driver.store.ts
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import { persist } from "zustand/middleware";
 import { driverApi } from "../api/endpoints/driver.api";
-import { Driver } from "../api/types/driver.types";
+import {
+  Driver,
+  DriverLocation,
+  DriverAvailability,
+} from "./types/driver.types";
 
-import { DriverActions, DriverState } from "./types/driver.types";
+export interface DriverState {
+  drivers: Driver[];
+  currentDriver: Driver | null;
+  nearbyDrivers: Driver[];
+  loading: boolean;
+  error: string | null;
+  pagination: {
+    total: number;
+    page: number;
+    pageSize: number;
+  };
+}
+
+export interface DriverActions {
+  // CRUD operations
+  createDriver: (
+    driverData: Omit<Driver, "id" | "createdAt" | "updatedAt">
+  ) => Promise<void>;
+  fetchDrivers: (
+    filters?: any,
+    page?: number,
+    pageSize?: number
+  ) => Promise<void>;
+  fetchDriverById: (id: number) => Promise<void>;
+  updateDriver: (id: number, updates: Partial<Driver>) => Promise<void>;
+  deleteDriver: (id: number) => Promise<void>;
+
+  // Status management
+  updateDriverStatus: (
+    id: number,
+    status: "offline" | "online" | "on_trip"
+  ) => Promise<void>;
+
+  // Location management
+  updateDriverLocation: (
+    id: number,
+    location: { lat: number; lng: number }
+  ) => Promise<void>;
+  fetchNearbyDrivers: (
+    lat: number,
+    lng: number,
+    radius?: number,
+    companyId?: number
+  ) => Promise<void>;
+
+  // Availability management
+  addDriverAvailability: (
+    data: Omit<DriverAvailability, "id">
+  ) => Promise<void>;
+  removeDriverAvailability: (id: number) => Promise<void>;
+
+  // Clear data
+  clearDriverData: () => void;
+}
 
 export const useDriverStore = create<DriverState & DriverActions>()(
-  immer((set) => ({
-    drivers: [],
-    currentDriver: null,
-    availabilities: [],
-    location: null,
-    loading: false,
-    error: null,
+  persist(
+    immer((set) => ({
+      drivers: [],
+      currentDriver: null,
+      nearbyDrivers: [],
+      loading: false,
+      error: null,
+      pagination: {
+        total: 0,
+        page: 1,
+        pageSize: 10,
+      },
 
-    fetchDrivers: async () => {
-      set({ loading: true, error: null });
-      try {
-        const drivers = await driverApi.getCompanyDrivers();
-        set({ drivers, loading: false });
-      } catch (error) {
-        set({ error: "Failed to fetch drivers", loading: false });
-      }
-    },
+      createDriver: async (driverData) => {
+        set({ loading: true, error: null });
+        try {
+          const driver = await driverApi.createDriver(driverData);
+          set((state) => {
+            state.drivers.push(driver);
+            state.loading = false;
+          });
+        } catch (error: any) {
+          set({
+            error: error.message || "Failed to create driver",
+            loading: false,
+          });
+        }
+      },
 
-    createDriver: async (driverData) => {
-      set({ loading: true, error: null });
-      try {
-        const driver = await driverApi.createDriver(driverData);
-        set((state) => {
-          state.drivers.push(driver);
-          state.loading = false;
-        });
-      } catch (error) {
-        set({ error: "Failed to create driver", loading: false });
-      }
-    },
+      fetchDrivers: async (filters = {}, page = 1, pageSize = 10) => {
+        set({ loading: true, error: null });
+        try {
+          const skip = (page - 1) * pageSize;
+          const response = await driverApi.getAllDrivers(filters, {
+            skip,
+            take: pageSize,
+          });
+          set({
+            drivers: response.data,
+            pagination: response.pagination,
+            loading: false,
+          });
+        } catch (error: any) {
+          set({
+            error: error.message || "Failed to fetch drivers",
+            loading: false,
+          });
+        }
+      },
 
-    updateDriver: async (driverId, updates) => {
-      set({ loading: true, error: null });
-      try {
-        const updatedDriver = await driverApi.updateDriver(driverId, updates);
-        set((state) => {
-          const index = state.drivers.findIndex(
-            (d: Driver) => d.id === driverId
+      fetchDriverById: async (id) => {
+        set({ loading: true, error: null });
+        try {
+          const driver = await driverApi.getDriverById(id);
+          set({ currentDriver: driver, loading: false });
+        } catch (error: any) {
+          set({
+            error: error.message || "Failed to fetch driver",
+            loading: false,
+          });
+        }
+      },
+
+      updateDriver: async (id, updates) => {
+        set({ loading: true, error: null });
+        try {
+          const updatedDriver = await driverApi.updateDriver(id, updates);
+          set((state) => {
+            const index = state.drivers.findIndex((d) => d.id === id);
+            if (index !== -1) {
+              state.drivers[index] = updatedDriver;
+            }
+            if (state.currentDriver && state.currentDriver.id === id) {
+              state.currentDriver = updatedDriver;
+            }
+            state.loading = false;
+          });
+        } catch (error: any) {
+          set({
+            error: error.message || "Failed to update driver",
+            loading: false,
+          });
+        }
+      },
+
+      deleteDriver: async (id) => {
+        set({ loading: true, error: null });
+        try {
+          await driverApi.deleteDriver(id);
+          set((state) => {
+            state.drivers = state.drivers.filter((d) => d.id !== id);
+            if (state.currentDriver && state.currentDriver.id === id) {
+              state.currentDriver = null;
+            }
+            state.loading = false;
+          });
+        } catch (error: any) {
+          set({
+            error: error.message || "Failed to delete driver",
+            loading: false,
+          });
+        }
+      },
+
+      updateDriverStatus: async (id, status) => {
+        set({ loading: true, error: null });
+        try {
+          const updatedDriver = await driverApi.updateDriverStatus(id, status);
+          set((state) => {
+            const index = state.drivers.findIndex((d) => d.id === id);
+            if (index !== -1) {
+              state.drivers[index].status = updatedDriver.status;
+            }
+            if (state.currentDriver && state.currentDriver.id === id) {
+              state.currentDriver.status = updatedDriver.status;
+            }
+            state.loading = false;
+          });
+        } catch (error: any) {
+          set({
+            error: error.message || "Failed to update driver status",
+            loading: false,
+          });
+        }
+      },
+
+      updateDriverLocation: async (id, location) => {
+        set({ loading: true, error: null });
+        try {
+          const updatedLocation = await driverApi.updateDriverLocation(
+            id,
+            location
           );
-          if (index !== -1) {
-            state.drivers[index] = updatedDriver;
-          }
-          if (state.currentDriver?.id === driverId) {
-            state.currentDriver = updatedDriver;
-          }
-          state.loading = false;
-        });
-      } catch (error) {
-        set({ error: "Failed to update driver", loading: false });
-      }
-    },
+          set((state) => {
+            const driverIndex = state.drivers.findIndex((d) => d.id === id);
+            if (driverIndex !== -1) {
+              state.drivers[driverIndex].location = updatedLocation;
+            }
+            if (state.currentDriver && state.currentDriver.id === id) {
+              state.currentDriver.location = updatedLocation;
+            }
+            state.loading = false;
+          });
+        } catch (error: any) {
+          set({
+            error: error.message || "Failed to update driver location",
+            loading: false,
+          });
+        }
+      },
 
-    deleteDriver: async (driverId) => {
-      set({ loading: true, error: null });
-      try {
-        await driverApi.deleteDriver(driverId);
-        set((state) => {
-          state.drivers = state.drivers.filter(
-            (d: Driver) => d.id !== driverId
+      fetchNearbyDrivers: async (lat, lng, radius = 5, companyId = null) => {
+        set({ loading: true, error: null });
+        try {
+          const drivers = await driverApi.getNearbyDrivers(
+            lat,
+            lng,
+            radius,
+            companyId
           );
-          state.loading = false;
+          set({ nearbyDrivers: drivers, loading: false });
+        } catch (error: any) {
+          set({
+            error: error.message || "Failed to fetch nearby drivers",
+            loading: false,
+          });
+        }
+      },
+
+      addDriverAvailability: async (data) => {
+        set({ loading: true, error: null });
+        try {
+          const availability = await driverApi.addDriverAvailability(data);
+          set((state) => {
+            if (
+              state.currentDriver &&
+              state.currentDriver.id === data.driverId
+            ) {
+              if (!state.currentDriver.availability) {
+                state.currentDriver.availability = [];
+              }
+              state.currentDriver.availability.push(availability);
+            }
+            state.loading = false;
+          });
+        } catch (error: any) {
+          set({
+            error: error.message || "Failed to add driver availability",
+            loading: false,
+          });
+        }
+      },
+
+      removeDriverAvailability: async (id) => {
+        set({ loading: true, error: null });
+        try {
+          await driverApi.removeDriverAvailability(id);
+          set((state) => {
+            if (state.currentDriver && state.currentDriver.availability) {
+              state.currentDriver.availability =
+                state.currentDriver.availability.filter((a) => a.id !== id);
+            }
+            state.loading = false;
+          });
+        } catch (error: any) {
+          set({
+            error: error.message || "Failed to remove driver availability",
+            loading: false,
+          });
+        }
+      },
+
+      clearDriverData: () => {
+        set({
+          drivers: [],
+          currentDriver: null,
+          nearbyDrivers: [],
+          error: null,
         });
-      } catch (error) {
-        set({ error: "Failed to delete driver", loading: false });
-      }
-    },
-
-    getDriverProfile: async () => {
-      set({ loading: true, error: null });
-      try {
-        const driver = await driverApi.getDriverProfile();
-        set({ currentDriver: driver, loading: false });
-      } catch (error) {
-        set({ error: "Failed to fetch driver profile", loading: false });
-      }
-    },
-
-    updateDriverStatus: async (status) => {
-      set({ loading: true, error: null });
-      try {
-        const driver = await driverApi.updateStatus(status);
-        set({ currentDriver: driver, loading: false });
-      } catch (error) {
-        set({ error: "Failed to update status", loading: false });
-      }
-    },
-
-    updateDriverLocation: async (location) => {
-      set({ loading: true, error: null });
-      try {
-        const updatedLocation = await driverApi.updateLocation(location);
-        set({ location: updatedLocation, loading: false });
-      } catch (error) {
-        set({ error: "Failed to update location", loading: false });
-      }
-    },
-
-    setAvailability: async (availability) => {
-      set({ loading: true, error: null });
-      try {
-        const newAvailability = await driverApi.setAvailability(availability);
-        set((state) => {
-          state.availabilities.push(newAvailability);
-          state.loading = false;
-        });
-      } catch (error) {
-        set({ error: "Failed to set availability", loading: false });
-      }
-    },
-
-    getAvailabilities: async () => {
-      set({ loading: true, error: null });
-      try {
-        const availabilities = await driverApi.getAvailabilities();
-        set({ availabilities, loading: false });
-      } catch (error) {
-        set({ error: "Failed to fetch availabilities", loading: false });
-      }
-    },
-
-    getAllDrivers: async () => {
-      set({ loading: true, error: null });
-      try {
-        const response = await driverApi.getAllDrivers();
-        set({ drivers: response.data, loading: false });
-      } catch (error) {
-        set({ error: "Failed to fetch all drivers", loading: false });
-      }
-    },
-  }))
+      },
+    })),
+    {
+      name: "driver-store", // Key in localStorage
+      partialize: (state) => ({
+        // Only persist the current driver
+        currentDriver: state.currentDriver,
+      }),
+    }
+  )
 );

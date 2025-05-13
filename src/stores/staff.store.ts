@@ -1,20 +1,12 @@
-// stores/staffStore.ts
 import { create } from "zustand";
 import { staffApi } from "../api/endpoints/staffApi";
 import { jwtDecode } from "jwt-decode";
-
-interface Staff {
-  id: number;
-  name: string;
-  email: string;
-  role: {
-    name: string;
-  };
-}
+import { Staff, CreateStaff } from "./types/staff.types";
 
 interface StaffState {
   staff: Staff[];
   selectedStaff: Staff | null;
+  admin: Staff | null;
   setStaff: (staff: Staff[]) => void;
   selectStaff: (staff: Staff) => void;
   clearSelectedStaff: () => void;
@@ -22,22 +14,25 @@ interface StaffState {
   removeStaff: (id: number) => void;
   fetchStaff: () => Promise<void>;
   getAdmin: (companyId: number) => Promise<void>;
-  admin: any;
+  addStaff: (staff: CreateStaff) => Promise<void>;
 }
 
 export const useStaffStore = create<StaffState>((set) => ({
   staff: [],
   selectedStaff: null,
+  admin: null,
+
   setStaff: (staff) => set({ staff }),
   selectStaff: (staff) => set({ selectedStaff: staff }),
   clearSelectedStaff: () => set({ selectedStaff: null }),
-  admin: null,
+
   updateStaff: (id, updatedStaff) =>
     set((state) => ({
       staff: state.staff.map((staff) =>
         staff.id === id ? { ...staff, ...updatedStaff } : staff
       ),
     })),
+
   removeStaff: (id) =>
     set((state) => ({
       staff: state.staff.filter((staff) => staff.id !== id),
@@ -45,24 +40,44 @@ export const useStaffStore = create<StaffState>((set) => ({
 
   fetchStaff: async () => {
     try {
-      const user = localStorage.getItem("authToken") as any;
+      const user = localStorage.getItem("authToken");
+      if (!user) throw new Error("No auth token found");
+
       const decoded: any = jwtDecode(user);
       const companyId = decoded.companyId;
-      const response = await staffApi.getCompanyStaff(companyId);
-      console.log(response, "^^^^^^^^^^^^");
 
-      set({ staff: response });
+      const response = (await staffApi.getCompanyStaff(companyId)) as any;
+      set({ staff: response.data.users });
     } catch (error) {
       console.error("Error fetching staff:", error);
     }
   },
+
+  addStaff: async (newStaff) => {
+    try {
+      const user = localStorage.getItem("authToken");
+      if (!user) throw new Error("No auth token found");
+
+      const decoded: any = jwtDecode(user);
+      const companyId = decoded.companyId;
+
+      const response = (await staffApi.addStaff(companyId, newStaff)) as any;
+      console.log(response);
+      set((state) => ({
+        staff: [...state.staff, response.data],
+      }));
+    } catch (error) {
+      console.error("Error adding staff:", error);
+      throw error;
+    }
+  },
+
   getAdmin: async (companyId: number) => {
     try {
-      const response = await staffApi.getAdmin(companyId);
-      console.log(response, "^^^^^^^^^^^^");
-      set({ admin: response });
+      const response = (await staffApi.getAdmin(companyId)) as any;
+      set({ admin: response.data });
     } catch (error) {
-      console.error("Error fetching staff:", error);
+      console.error("Error fetching admin:", error);
     }
   },
 }));

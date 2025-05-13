@@ -19,7 +19,7 @@ type FormErrors = {
 };
 
 export default function SignInForm() {
-  const { login, error, loading, user, token } = useAuthStore(); // Added navigate hook
+  const { login, error, loading, user } = useAuthStore(); // Added navigate hook
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -91,7 +91,6 @@ export default function SignInForm() {
     e.preventDefault();
 
     if (validateForm()) {
-      console.log("Form submitted:", formData, "Keep me logged in:", isChecked);
       const { email, password } = formData;
       login(email, password);
     }

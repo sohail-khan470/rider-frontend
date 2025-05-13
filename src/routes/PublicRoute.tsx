@@ -2,13 +2,13 @@ import { Navigate } from "react-router-dom";
 
 const PublicRoute = ({ children }: { children: JSX.Element }) => {
   const authToken = localStorage.getItem("authToken");
-  const type = localStorage.getItem("type");
+  const userRole = localStorage.getItem("role");
 
-  if (authToken && type === "super_admin") {
+  if (authToken && userRole === "super_admin") {
     return <Navigate to="/" replace />;
   }
 
-  if (authToken && type === "user") {
+  if (authToken && userRole === "admin") {
     return <Navigate to="/company/home" replace />;
   }
 

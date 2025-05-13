@@ -12,11 +12,12 @@ export interface AuthState {
 
 export interface AuthActions {
   login: (email: string, password: string) => Promise<void>;
-  initialize: () => void;
+  initialize: () => Promise<void>;
+  getUserProfile: () => Promise<void>;
 
   // Common
   // initializeAuth: () => Promise<void>;
   // refreshToken: () => Promise<void>;
-  // logout: () => Promise<void>;
+  logout: () => void;
   // clearError: () => void;
 }

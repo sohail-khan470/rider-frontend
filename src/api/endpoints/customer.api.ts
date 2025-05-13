@@ -56,7 +56,6 @@ export const customerApi = {
   },
 
   getAllCustomers: async (): Promise<CustomerResponse> => {
-    console.log("Fetching all customers...");
     const response = await apiClient.get("/api/customers/getAll");
     return response.data;
   },

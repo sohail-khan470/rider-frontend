@@ -1,4 +1,5 @@
 // src/api/endpoints/staff.api.ts
+
 import apiClient from "../client";
 
 import { Staff, StaffRole } from "../types/staff.types";
@@ -7,14 +8,6 @@ export const staffApi = {
   // Company endpoints
   getCompanyStaff: async (companyId: number): Promise<Staff[]> => {
     const response = await apiClient.get(`/api/company/${companyId}/users`);
-    console.log(response, "^^^^^^^^^^^^");
-    return response.data;
-  },
-
-  createStaff: async (
-    staffData: Omit<Staff, "id" | "createdAt" | "updatedAt">
-  ): Promise<Staff> => {
-    const response = await apiClient.post("/companies/staff", staffData);
     return response.data;
   },
 
@@ -60,7 +53,17 @@ export const staffApi = {
 
   getAdmin: async (companyId: number): Promise<Staff> => {
     const response = await apiClient.get(`/api/users/admins/${companyId}`);
-    console.log(response, "^^^^^^^^^^^^");
+
+    return response.data;
+  },
+
+  addStaff: async (companyId: number, data: any): Promise<Staff> => {
+    console.log(companyId, data);
+    data.companyId = companyId;
+    const response = await apiClient.post("/api/users", {
+      data,
+    });
+    console.log(response);
     return response.data;
   },
 };

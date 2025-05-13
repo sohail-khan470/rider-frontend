@@ -27,7 +27,9 @@ export const bookingApi = {
 
   // Company endpoints
   getCompanyBookings: async (): Promise<Booking[]> => {
-    const response = await apiClient.get("/companies/bookings");
+    const response = await apiClient.post("/api/bookings/company", {
+      companyId: 2,
+    });
     return response.data;
   },
 

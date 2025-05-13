@@ -77,8 +77,9 @@ export const useBookingStore = create<BookingState & BookingActions>()(
     fetchCompanyBookings: async () => {
       set({ loading: true, error: null });
       try {
-        const bookings = await bookingApi.getCompanyBookings();
-        set({ bookings, loading: false });
+        const data = (await bookingApi.getCompanyBookings()) as any;
+        console.log(data);
+        set({ bookings: data.result, loading: false });
       } catch (error: unknown) {
         set({
           error:

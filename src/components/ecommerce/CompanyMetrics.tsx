@@ -11,7 +11,6 @@ export default function CompanyMetrics() {
     fetchAllCompanies();
   }, []);
 
-  console.log(statistics);
   if (!statistics) return null;
 
   const {
