@@ -16,6 +16,10 @@ import BookingManagement from "../pages/BookingManagement/BookingManagement";
 import StaffManagement from "../pages/StaffManagement/StaffManagement";
 import CompanySettings from "../pages/Company/CompanySettings";
 import PublicRoute from "./PublicRoute";
+import DriverList from "../pages/DriverManagement/DriverList";
+import DriverDetail from "../pages/DriverManagement/DriverDetail";
+import DriverForm from "../pages/DriverManagement/DriverForm";
+import DriverLocationManagement from "../pages/DriverManagement/DriverLocationManagement";
 
 export const RouterConfig = () => {
   return (
@@ -59,6 +63,20 @@ export const RouterConfig = () => {
             <Route path="/bookings" element={<BookingManagement />} />
             <Route path="/staff" element={<StaffManagement />} />
             <Route path="/settings" element={<CompanySettings />} />
+          </Route>
+        </Route>
+      </Route>
+      <Route element={<ProtectedRoute />}>
+        <Route element={<RoleRoute type={["admin", "super_admin"]} />}>
+          <Route element={<AppLayout />}>
+            <Route path="/drivers" element={<DriverList />} />
+            <Route path="/drivers/:id" element={<DriverDetail />} />
+            <Route path="/drivers/create" element={<DriverForm />} />
+            <Route path="/drivers/edit/:id" element={<DriverForm />} />
+            <Route
+              path="/drivers/locations"
+              element={<DriverLocationManagement />}
+            />
           </Route>
         </Route>
       </Route>
