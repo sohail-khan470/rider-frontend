@@ -1,9 +1,12 @@
 // src/pages/DriverManagement/DriverForm.tsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useDriverStore } from "../../store/driver.store";
-import Breadcrumb from "../../components/Breadcrumb";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import { useDriverStore } from "../../stores";
+import Breadcrumb from "../../components/Drivers/BreadCrumb";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
+// import { useDriverStore } from "../../store/driver.store";
+// import Breadcrumb from "../../components/Breadcrumb";
+// import LoadingSpinner from "../../components/LoadingSpinner";
 
 const DriverForm = () => {
   const { id } = useParams();

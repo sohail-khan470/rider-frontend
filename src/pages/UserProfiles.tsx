@@ -13,7 +13,7 @@ export default function UserProfiles() {
     getUserProfile();
   }, []);
 
-  console.log(user, "VVVVVVVVVVVV");
+  console.log(user);
 
   return (
     <>

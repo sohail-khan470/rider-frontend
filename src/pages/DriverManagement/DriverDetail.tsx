@@ -1,18 +1,20 @@
 // src/pages/DriverManagement/DriverDetail.tsx
 import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useDriverStore } from "../../store/driver.store";
-import Breadcrumb from "../../components/Breadcrumb";
-import DriverInfo from "../../components/drivers/DriverInfo";
-import DriverLocationMap from "../../components/drivers/DriverLocationMap";
-import DriverAvailabilityCalendar from "../../components/drivers/DriverAvailabilityCalendar";
-import DriverBookingHistory from "../../components/drivers/DriverBookingHistory";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import Breadcrumb from "../../components/Drivers/BreadCrumb";
+import DriverInfo from "../../components/Drivers/DriverInfo";
+import { useDriverStore } from "../../stores";
+import DriverBookingHistory from "../../components/Drivers/DriverBookingHistory";
+import DriverAvailabilityCalendar from "../../components/Drivers/DriverAvalibilityCalender";
+import DriverLocationMap from "../../components/Drivers/DriverLocationMap";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 const DriverDetail = () => {
   const { id } = useParams();
   const { currentDriver, loading, error, fetchDriverById, updateDriverStatus } =
     useDriverStore();
+
+  console.log(currentDriver);
 
   useEffect(() => {
     if (id) {

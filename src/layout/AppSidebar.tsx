@@ -33,6 +33,37 @@ const superAdminItems: NavItem[] = [
   },
 ];
 
+// const companyAdminItems: NavItem[] = [
+//   {
+//     icon: <GridIcon />,
+//     name: "Dashboard",
+//     subItems: [{ name: "Listings", path: "/company/home", pro: false }],
+//   },
+//   {
+//     icon: <UserCircleIcon />,
+//     name: "Admin Detail",
+//     path: "/profile",
+//   },
+//   {
+//     name: "Bookings Management",
+//     icon: <TableIcon />,
+//     path: "/bookings",
+//   },
+//   {
+//     name: "Staff Management",
+//     icon: <PageIcon />,
+//     // subItems: [
+//     //   { name: "Blank Page", path: "/blank", pro: false },
+//     //   { name: "404 Error", path: "/error-404", pro: false },
+//     // ],
+//     path: "/staff",
+//   },
+//   {
+//     name: "Company Settings",
+//     icon: <LockIcon />,
+//     path: "/settings",
+//   },
+// ];
 const companyAdminItems: NavItem[] = [
   {
     icon: <GridIcon />,
@@ -50,12 +81,17 @@ const companyAdminItems: NavItem[] = [
     path: "/bookings",
   },
   {
+    name: "Drivers Management",
+    icon: <UserCircleIcon />,
+    // You can either have direct path or submenu
+    subItems: [
+      { name: "All Drivers", path: "/drivers", pro: false },
+      { name: "Add Driver", path: "/drivers/new", pro: false },
+    ],
+  },
+  {
     name: "Staff Management",
     icon: <PageIcon />,
-    // subItems: [
-    //   { name: "Blank Page", path: "/blank", pro: false },
-    //   { name: "404 Error", path: "/error-404", pro: false },
-    // ],
     path: "/staff",
   },
   {

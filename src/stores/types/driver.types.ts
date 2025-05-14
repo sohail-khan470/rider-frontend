@@ -19,12 +19,16 @@ export interface DriverAvailability {
 
 export interface Driver {
   id: number;
-  name: string;
+  name?: string;
+  status: string;
+  distance?: number;
+
   email: string;
   phone: string;
-  status: DriverStatus;
+
   vehicleInfo: string;
   companyId: number;
+
   location?: DriverLocation;
   availability?: DriverAvailability[];
   bookings?: any[]; // You can define a proper Booking type if needed

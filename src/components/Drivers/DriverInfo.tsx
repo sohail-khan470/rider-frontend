@@ -1,5 +1,6 @@
 // src/components/drivers/DriverInfo.tsx
-import { Driver } from "../../store/types/driver.types";
+
+import { Driver } from "../../stores/types/driver.types";
 import DriverStatusBadge from "./DriverStatusBadge";
 
 interface DriverInfoProps {
@@ -7,6 +8,7 @@ interface DriverInfoProps {
 }
 
 const DriverInfo = ({ driver }: DriverInfoProps) => {
+  console.log(driver, "::::::::::::");
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default p-4 md:p-6 mb-6">
       <h3 className="text-xl font-semibold mb-4">Driver Information</h3>

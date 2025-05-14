@@ -1,23 +1,29 @@
-// src/components/drivers/DriverFilters.tsx
 import { useState } from "react";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 interface DriverFiltersProps {
   onFilterChange: (filters: any) => void;
+  currentFilters: Record<string, any>;
+  loading?: boolean;
 }
 
-const DriverFilters = ({ onFilterChange }: DriverFiltersProps) => {
-  const [filters, setFilters] = useState({
-    name: "",
-    email: "",
-    status: "",
-    companyId: "",
+const DriverFilters = ({
+  onFilterChange,
+  currentFilters,
+  loading,
+}: DriverFiltersProps) => {
+  const [localFilters, setLocalFilters] = useState({
+    name: currentFilters.name || "",
+    email: currentFilters.email || "",
+    status: currentFilters.status || "",
+    companyId: currentFilters.companyId || "",
   });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFilters((prev) => ({
+    setLocalFilters((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -28,7 +34,7 @@ const DriverFilters = ({ onFilterChange }: DriverFiltersProps) => {
 
     // Clean up empty filters
     const cleanFilters = Object.fromEntries(
-      Object.entries(filters).filter(([_, value]) => value !== "")
+      Object.entries(localFilters).filter(([_, value]) => value !== "")
     );
 
     // Convert companyId to number if present
@@ -40,7 +46,7 @@ const DriverFilters = ({ onFilterChange }: DriverFiltersProps) => {
   };
 
   const handleReset = () => {
-    setFilters({
+    setLocalFilters({
       name: "",
       email: "",
       status: "",
@@ -60,7 +66,7 @@ const DriverFilters = ({ onFilterChange }: DriverFiltersProps) => {
             <input
               type="text"
               name="name"
-              value={filters.name}
+              value={localFilters.name}
               onChange={handleChange}
               className="w-full rounded border border-stroke py-2 px-3 focus:border-primary focus-visible:outline-none"
               placeholder="Search by name"
@@ -72,7 +78,7 @@ const DriverFilters = ({ onFilterChange }: DriverFiltersProps) => {
             <input
               type="text"
               name="email"
-              value={filters.email}
+              value={localFilters.email}
               onChange={handleChange}
               className="w-full rounded border border-stroke py-2 px-3 focus:border-primary focus-visible:outline-none"
               placeholder="Search by email"
@@ -83,7 +89,7 @@ const DriverFilters = ({ onFilterChange }: DriverFiltersProps) => {
             <label className="block mb-2 text-sm">Status</label>
             <select
               name="status"
-              value={filters.status}
+              value={localFilters.status}
               onChange={handleChange}
               className="w-full rounded border border-stroke py-2 px-3 focus:border-primary focus-visible:outline-none"
             >
@@ -99,7 +105,7 @@ const DriverFilters = ({ onFilterChange }: DriverFiltersProps) => {
             <input
               type="text"
               name="companyId"
-              value={filters.companyId}
+              value={localFilters.companyId}
               onChange={handleChange}
               className="w-full rounded border border-stroke py-2 px-3 focus:border-primary focus-visible:outline-none"
               placeholder="Filter by company"
@@ -112,14 +118,23 @@ const DriverFilters = ({ onFilterChange }: DriverFiltersProps) => {
             type="button"
             onClick={handleReset}
             className="inline-flex items-center justify-center border border-stroke py-2 px-4 mr-2 rounded-md text-black hover:bg-gray-100"
+            disabled={loading}
           >
             Reset
           </button>
           <button
             type="submit"
-            className="inline-flex items-center justify-center bg-primary py-2 px-4 text-white rounded-md hover:bg-opacity-90"
+            className="inline-flex items-center justify-center bg-primary py-2 px-4 text-white rounded-md hover:bg-opacity-90 min-w-[120px]"
+            disabled={loading}
           >
-            Apply Filters
+            {loading ? (
+              <>
+                <LoadingSpinner size="sm" className="mr-2" />
+                Applying...
+              </>
+            ) : (
+              "Apply Filters"
+            )}
           </button>
         </div>
       </form>

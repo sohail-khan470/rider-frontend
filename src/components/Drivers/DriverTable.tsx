@@ -1,27 +1,13 @@
-// src/components/drivers/DriverTable.tsx
 import { Link } from "react-router-dom";
-import { Driver } from "../../store/types/driver.types";
-import DriverStatusBadge from "./DriverStatusBadge";
 
+import { Driver } from "../../stores/types/driver.types";
+import DriverStatusBadge from "./DriverStatusBadge";
 interface DriverTableProps {
   drivers: Driver[];
   loading: boolean;
-  pagination: {
-    total: number;
-    page: number;
-    pageSize: number;
-  };
-  onPageChange: (page: number) => void;
 }
 
-const DriverTable = ({
-  drivers,
-  loading,
-  pagination,
-  onPageChange,
-}: DriverTableProps) => {
-  const totalPages = Math.ceil(pagination.total / pagination.pageSize);
-
+const DriverTable = ({ drivers, loading }: DriverTableProps) => {
   return (
     <div>
       <div className="overflow-x-auto">
@@ -81,40 +67,6 @@ const DriverTable = ({
           </tbody>
         </table>
       </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-between items-center mt-6">
-          <div className="text-sm text-gray-600">
-            Showing {pagination.page} of {totalPages} pages ({pagination.total}{" "}
-            drivers)
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => onPageChange(pagination.page - 1)}
-              disabled={pagination.page === 1}
-              className={`px-3 py-1 rounded ${
-                pagination.page === 1
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => onPageChange(pagination.page + 1)}
-              disabled={pagination.page === totalPages}
-              className={`px-3 py-1 rounded ${
-                pagination.page === totalPages
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

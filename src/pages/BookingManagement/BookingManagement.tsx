@@ -1,5 +1,4 @@
 import PageMeta from "../../components/common/PageMeta";
-import BookingTable from "../../components/tables/BasicTables/BookingTable";
 
 // import BookingTable from "../../components/booking/BookingTable";
 
@@ -15,7 +14,6 @@ export default function BookingManagement() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
           Booking Management
         </h1>
-        <BookingTable />
       </div>
     </>
   );

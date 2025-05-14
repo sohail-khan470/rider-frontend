@@ -1,9 +1,8 @@
 // src/pages/DriverManagement/DriverLocationManagement.tsx
 import { useState, useEffect } from "react";
-import { useDriverStore } from "../../store/driver.store";
-import Breadcrumb from "../../components/Breadcrumb";
-import NearbyDriversMap from "../../components/drivers/NearbyDriversMap";
-import DriverTable from "../../components/drivers/DriverTable";
+import { useDriverStore } from "../../stores";
+import Breadcrumb from "../../components/Drivers/BreadCrumb";
+import NearbyDriversMap from "../../components/Drivers/NearbyDriversMap";
 
 const DriverLocationManagement = () => {
   const { fetchNearbyDrivers, nearbyDrivers, loading, error } =
@@ -17,7 +16,6 @@ const DriverLocationManagement = () => {
   });
 
   useEffect(() => {
-    // Default to current location if available
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setLocation((prev) => ({
@@ -30,11 +28,10 @@ const DriverLocationManagement = () => {
           position.coords.latitude,
           position.coords.longitude,
           location.radius,
-          location.companyId
+          location.companyId ?? undefined // Convert null to undefined
         );
       },
       () => {
-        // Fallback to a default location if geolocation is not available
         const defaultLat = 40.7128;
         const defaultLng = -74.006;
 
@@ -48,7 +45,7 @@ const DriverLocationManagement = () => {
           defaultLat,
           defaultLng,
           location.radius,
-          location.companyId
+          location.companyId ?? undefined // Convert null to undefined
         );
       }
     );
@@ -59,7 +56,7 @@ const DriverLocationManagement = () => {
       location.lat,
       location.lng,
       location.radius,
-      location.companyId
+      location.companyId ?? undefined // Convert null to undefined
     );
   };
 
@@ -190,7 +187,9 @@ const DriverLocationManagement = () => {
                         {driver.status}
                       </span>
                     </td>
-                    <td className="p-3">{driver.distance.toFixed(2)}</td>
+                    <td className="p-3">
+                      {driver.distance ? driver.distance.toFixed(2) : ""}
+                    </td>
                     <td className="p-3">
                       <a
                         href={`/drivers/${driver.id}`}

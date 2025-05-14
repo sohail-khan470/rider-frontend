@@ -1,7 +1,6 @@
 // src/components/drivers/DriverStats.tsx
 import { useEffect, useState } from "react";
-import { useDriverStore } from "../../store/driver.store";
-
+import { useDriverStore } from "../../stores";
 const DriverStats = () => {
   const { drivers } = useDriverStore();
   const [stats, setStats] = useState({
