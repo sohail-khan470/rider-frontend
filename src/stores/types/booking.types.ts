@@ -1,4 +1,5 @@
-// src/api/types/booking.types.ts
+// store/types/booking.types.ts
+
 export type BookingStatus =
   | "pending"
   | "accepted"
@@ -6,33 +7,37 @@ export type BookingStatus =
   | "completed"
   | "cancelled";
 
-// export interface Booking {
-//   id: number;
-//   customerId: number;
-//   driverId?: number;
-//   companyId: number;
-//   pickup: string;
-//   dropoff: string;
-//   status: BookingStatus;
-//   fare?: number;
-//   requestedAt: string;
-// }
-export type Booking = {
+export interface Customer {
   id: number;
+  name: string;
+  email: string;
+  phone: string;
   companyId: number;
-  customer: {
-    id: number;
-    name: string;
-    phone: string;
-  };
-  driver?: {
-    id: number;
-    name: string;
-    vehicleInfo: string;
-  };
+}
+
+export interface Driver {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  status: "offline" | "online" | "on_trip";
+  vehicleInfo: string;
+  companyId: number;
+  cityId: number;
+}
+
+export interface Booking {
+  id: number;
+  customerId: number;
+  driverId?: number | null;
+  companyId: number;
   pickup: string;
   dropoff: string;
-  fare: number | null;
   status: BookingStatus;
-  requestedAt: string;
-};
+  fare?: number | null;
+  requestedAt: string | Date;
+
+  // Related entities (these would be populated by your API)
+  customer?: Customer;
+  driver?: Driver;
+}

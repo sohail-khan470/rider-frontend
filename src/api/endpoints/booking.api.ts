@@ -1,35 +1,37 @@
-// src/api/endpoints/booking.api.ts
-import apiClient from "../client";
+// api/endpoints/booking.api.ts
+
 import { Booking, BookingStatus } from "../types/booking.types";
+import apiClient from "../client";
 
 export const bookingApi = {
-  // Customer endpoints
   createBooking: async (bookingData: {
     pickup: string;
     dropoff: string;
     fare?: number;
   }): Promise<Booking> => {
-    const response = await apiClient.post("/customers/bookings", bookingData);
+    const response = await apiClient.post("/api/bookings", bookingData);
     return response.data;
   },
 
   getCustomerBookings: async (): Promise<Booking[]> => {
-    const response = await apiClient.get("/customers/bookings");
+    const response = await apiClient.get("/api/bookings/customer");
+    return response.data;
+  },
+
+  getCompanyBookings: async (companyId: number): Promise<Booking[]> => {
+    const response = await apiClient.post("/api/bookings/company", {
+      companyId,
+    });
+    return response.data;
+  },
+
+  getDriverBookings: async (): Promise<Booking[]> => {
+    const response = await apiClient.get("/api/bookings/driver");
     return response.data;
   },
 
   cancelBooking: async (bookingId: number): Promise<Booking> => {
-    const response = await apiClient.patch(
-      `/customers/bookings/${bookingId}/cancel`
-    );
-    return response.data;
-  },
-
-  // Company endpoints
-  getCompanyBookings: async (): Promise<Booking[]> => {
-    const response = await apiClient.post("/api/bookings/company", {
-      companyId: 2,
-    });
+    const response = await apiClient.patch(`/api/bookings/${bookingId}/cancel`);
     return response.data;
   },
 
@@ -38,8 +40,10 @@ export const bookingApi = {
     driverId: number
   ): Promise<Booking> => {
     const response = await apiClient.patch(
-      `/companies/bookings/${bookingId}/assign`,
-      { driverId }
+      `/api/bookings/${bookingId}/assign`,
+      {
+        driverId,
+      }
     );
     return response.data;
   },
@@ -49,29 +53,29 @@ export const bookingApi = {
     status: BookingStatus
   ): Promise<Booking> => {
     const response = await apiClient.patch(
-      `/companies/bookings/${bookingId}/status`,
-      { status }
+      `/api/bookings/${bookingId}/status`,
+      {
+        status,
+      }
     );
-    return response.data;
-  },
-
-  // Driver endpoints
-  getDriverBookings: async (): Promise<Booking[]> => {
-    const response = await apiClient.get("/drivers/bookings");
     return response.data;
   },
 
   acceptBooking: async (bookingId: number): Promise<Booking> => {
-    const response = await apiClient.patch(
-      `/drivers/bookings/${bookingId}/accept`
-    );
+    const response = await apiClient.patch(`/api/bookings/${bookingId}/accept`);
     return response.data;
   },
 
   completeBooking: async (bookingId: number): Promise<Booking> => {
     const response = await apiClient.patch(
-      `/drivers/bookings/${bookingId}/complete`
+      `/api/bookings/${bookingId}/complete`
     );
+    return response.data;
+  },
+
+  getBookingById: async (bookingId: number): Promise<Booking> => {
+    console.log("<<<<<<<<<");
+    const response = await apiClient.get(`/api/bookings/${bookingId}`);
     return response.data;
   },
 };

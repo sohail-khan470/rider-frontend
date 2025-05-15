@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { bookingApi } from "../api/endpoints/booking.api";
 import { Booking, BookingStatus } from "./types/booking.types";
+import { jwtDecode } from "jwt-decode";
 
 type BookingState = {
   bookings: Booking[];
@@ -75,11 +76,19 @@ export const useBookingStore = create<BookingState & BookingActions>()(
     },
 
     fetchCompanyBookings: async () => {
+      console.log("@Company bookings");
       set({ loading: true, error: null });
+
+      const token = localStorage.getItem("authToken") || "";
+      const decoded = jwtDecode(token) as any;
+      const companyId = decoded.companyId;
+
       try {
-        const data = (await bookingApi.getCompanyBookings()) as any;
-        console.log(data);
-        set({ bookings: data.result, loading: false });
+        const response = (await bookingApi.getCompanyBookings(
+          companyId
+        )) as any;
+        console.log(response, "&&&&&&&&");
+        set({ bookings: response.result, loading: false });
       } catch (error: unknown) {
         set({
           error:
