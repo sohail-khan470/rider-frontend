@@ -21,6 +21,7 @@ export interface CompanyState {
   companies: Company[];
   currentCompany: Company | null;
   companyAdmin: CompanyAdmin | null;
+  companyCustomers: any;
   loading: boolean;
   error: string | null;
 }
@@ -41,4 +42,5 @@ export interface CompanyActions {
   getCompanyByAdminId: (id: number) => Promise<void>;
   getCompanyById: (id: number) => Promise<void>;
   logout: () => void;
+  fetchCompanyCustomers: () => void;
 }

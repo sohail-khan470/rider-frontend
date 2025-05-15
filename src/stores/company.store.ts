@@ -4,15 +4,33 @@ import { persist } from "zustand/middleware";
 import { companyApi } from "../api/endpoints/company.api";
 import { Company } from "./types/company.types";
 import { CompanyState, CompanyActions } from "./types/company.types";
+import { jwtDecode } from "jwt-decode";
 
 export const useCompanyStore = create<CompanyState & CompanyActions>()(
   persist(
     immer((set) => ({
       companies: [],
+      companyCustomers: [],
       currentCompany: null,
       companyAdmin: null,
       loading: false,
       error: null,
+
+      fetchCompanyCustomers: async () => {
+        set({ loading: true, error: null });
+        try {
+          const token = localStorage.getItem("authToken") || " ";
+          const decoded = jwtDecode(token) as any;
+          const companyId = decoded.companyId;
+
+          const response = (await companyApi.getCompanyCustomers(
+            companyId
+          )) as any;
+          set({ companyCustomers: response.customers, loading: false });
+        } catch (error) {
+          set({ error: "Failed to fetch customers", loading: false });
+        }
+      },
 
       registerCompany: async (companyData) => {
         set({ loading: true, error: null });

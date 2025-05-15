@@ -7,7 +7,7 @@ import { useBookingStore, useDriverStore } from "../../stores";
 
 const BookingManagement: React.FC = () => {
   const {
-    bookings,
+    bookings = [],
     loading,
     error,
     fetchCompanyBookings,
@@ -16,7 +16,7 @@ const BookingManagement: React.FC = () => {
     updateBookingStatus,
     clearError,
   } = useBookingStore();
-  const { fetchDrivers, drivers } = useDriverStore();
+  const { fetchDrivers, drivers = [] } = useDriverStore();
 
   const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>("all");
@@ -25,13 +25,10 @@ const BookingManagement: React.FC = () => {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
-  // Fetch drivers - assuming you have a function to fetch drivers
+  // Fetch drivers
   useEffect(() => {
     fetchDrivers();
-  }, []);
-  console.log(bookings);
-
-  console.log(drivers);
+  }, [fetchDrivers]);
 
   // Fetch bookings on component mount
   useEffect(() => {
@@ -45,21 +42,26 @@ const BookingManagement: React.FC = () => {
     };
   }, [clearError]);
 
-  // Filter and search functionality
   const filteredBookings = bookings.filter((booking) => {
-    const matchesStatus =
-      filterStatus === "all" || booking.status === filterStatus;
+    if (!booking) return false;
+
+    const status = booking.status || "";
+    const pickup = booking.pickup || "";
+    const dropoff = booking.dropoff || "";
+    const id = booking.id ? String(booking.id) : "";
+
+    const matchesStatus = filterStatus === "all" || status === filterStatus;
     const matchesSearch =
-      booking.pickup.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.dropoff.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      String(booking.id).includes(searchTerm);
+      pickup.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      dropoff.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      id.includes(searchTerm);
 
     return matchesStatus && matchesSearch;
   });
 
   // Handler for driver assignment
   const handleAssignDriver = async (bookingId: number) => {
-    if (selectedDriverId) {
+    if (selectedDriverId && bookingId) {
       await assignDriver(bookingId, selectedDriverId);
       setSelectedDriverId(null);
     }
@@ -70,12 +72,16 @@ const BookingManagement: React.FC = () => {
     bookingId: number,
     status: BookingStatus
   ) => {
-    await updateBookingStatus(bookingId, status);
+    if (bookingId) {
+      await updateBookingStatus(bookingId, status);
+    }
   };
 
   // Get status badge color
   const getStatusBadgeColor = (status: BookingStatus) => {
-    switch (status) {
+    if (!status) return "bg-gray-100 text-gray-800";
+
+    switch (status.toLowerCase()) {
       case "pending":
         return "bg-yellow-100 text-yellow-800";
       case "accepted":
@@ -93,9 +99,20 @@ const BookingManagement: React.FC = () => {
 
   // Open booking detail modal
   const openBookingDetail = (booking: Booking) => {
-    setSelectedBooking(booking);
-    setIsDetailModalOpen(true);
+    if (booking) {
+      setSelectedBooking(booking);
+      setIsDetailModalOpen(true);
+    }
   };
+
+  // Calculate booking stats safely
+  const totalBookings = bookings?.length || 0;
+  const pendingBookings =
+    bookings?.filter((b) => b?.status === "pending")?.length || 0;
+  const completedBookings =
+    bookings?.filter((b) => b?.status === "completed")?.length || 0;
+  const ongoingBookings =
+    bookings?.filter((b) => b?.status === "ongoing")?.length || 0;
 
   return (
     <div className="p-6">
@@ -169,28 +186,28 @@ const BookingManagement: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow-sm p-4">
           <div className="font-bold text-3xl text-blue-600">
-            {bookings.length}
+            {totalBookings}
           </div>
           <div className="text-gray-600">Total Bookings</div>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-4">
           <div className="font-bold text-3xl text-yellow-600">
-            {bookings.filter((b) => b.status === "pending").length}
+            {pendingBookings}
           </div>
           <div className="text-gray-600">Pending</div>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-4">
           <div className="font-bold text-3xl text-green-600">
-            {bookings.filter((b) => b.status === "completed").length}
+            {completedBookings}
           </div>
           <div className="text-gray-600">Completed</div>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-4">
           <div className="font-bold text-3xl text-purple-600">
-            {bookings.filter((b) => b.status === "ongoing").length}
+            {ongoingBookings}
           </div>
           <div className="text-gray-600">Ongoing</div>
         </div>
@@ -275,25 +292,26 @@ const BookingManagement: React.FC = () => {
                   </tr>
                 ) : (
                   filteredBookings.map((booking: Booking) => (
-                    <tr key={booking.id} className="hover:bg-gray-50">
+                    <tr
+                      key={booking?.id || Math.random()}
+                      className="hover:bg-gray-50"
+                    >
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        #{booking.id}
+                        #{booking?.id || "N/A"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {/* Assuming customer data is available in the booking object */}
-                        {booking.customer?.name ||
-                          "Customer " + booking.customerId}
+                        {booking?.customer?.name ||
+                          `Customer ${booking?.customerId || "N/A"}`}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {booking.pickup}
+                        {booking?.pickup || "N/A"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {booking.dropoff}
+                        {booking?.dropoff || "N/A"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {booking.driverId ? (
-                          // Assuming driver data is available in the booking object
-                          booking.driver?.name || "Driver " + booking.driverId
+                        {booking?.driverId ? (
+                          booking?.driver?.name || `Driver ${booking.driverId}`
                         ) : (
                           <div className="flex items-center">
                             <select
@@ -302,20 +320,22 @@ const BookingManagement: React.FC = () => {
                               onChange={(e) =>
                                 setSelectedDriverId(Number(e.target.value))
                               }
-                              disabled={booking.status !== "pending"}
+                              disabled={booking?.status !== "pending"}
                             >
                               <option value="">Select Driver</option>
                               {drivers.map((driver) => (
-                                <option key={driver.id} value={driver.id}>
-                                  {driver.name}
+                                <option key={driver?.id} value={driver?.id}>
+                                  {driver?.name || "Unknown Driver"}
                                 </option>
                               ))}
                             </select>
                             <button
-                              onClick={() => handleAssignDriver(booking.id)}
+                              onClick={() =>
+                                booking?.id && handleAssignDriver(booking.id)
+                              }
                               disabled={
                                 !selectedDriverId ||
-                                booking.status !== "pending"
+                                booking?.status !== "pending"
                               }
                               className="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded disabled:opacity-50"
                             >
@@ -327,22 +347,25 @@ const BookingManagement: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(
-                            booking.status
+                            booking?.status as BookingStatus
                           )}`}
                         >
-                          {booking.status.charAt(0).toUpperCase() +
-                            booking.status.slice(1)}
+                          {booking?.status
+                            ? booking.status.charAt(0).toUpperCase() +
+                              booking.status.slice(1)
+                            : "Unknown"}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        ${booking.fare?.toFixed(2) || "N/A"}
+                        ${booking?.fare?.toFixed(2) || "N/A"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex space-x-2">
-                          {booking.status === "pending" && (
+                          {booking?.status === "pending" && (
                             <>
                               <button
                                 onClick={() =>
+                                  booking?.id &&
                                   handleStatusUpdate(booking.id, "accepted")
                                 }
                                 className="text-indigo-600 hover:text-indigo-900 text-xs bg-indigo-50 px-2 py-1 rounded"
@@ -350,7 +373,9 @@ const BookingManagement: React.FC = () => {
                                 Accept
                               </button>
                               <button
-                                onClick={() => cancelBooking(booking.id)}
+                                onClick={() =>
+                                  booking?.id && cancelBooking(booking.id)
+                                }
                                 className="text-red-600 hover:text-red-900 text-xs bg-red-50 px-2 py-1 rounded"
                               >
                                 Cancel
@@ -358,9 +383,10 @@ const BookingManagement: React.FC = () => {
                             </>
                           )}
 
-                          {booking.status === "accepted" && (
+                          {booking?.status === "accepted" && (
                             <button
                               onClick={() =>
+                                booking?.id &&
                                 handleStatusUpdate(booking.id, "ongoing")
                               }
                               className="text-purple-600 hover:text-purple-900 text-xs bg-purple-50 px-2 py-1 rounded"
@@ -369,9 +395,10 @@ const BookingManagement: React.FC = () => {
                             </button>
                           )}
 
-                          {booking.status === "ongoing" && (
+                          {booking?.status === "ongoing" && (
                             <button
                               onClick={() =>
+                                booking?.id &&
                                 handleStatusUpdate(booking.id, "completed")
                               }
                               className="text-green-600 hover:text-green-900 text-xs bg-green-50 px-2 py-1 rounded"
@@ -381,7 +408,9 @@ const BookingManagement: React.FC = () => {
                           )}
 
                           <button
-                            onClick={() => openBookingDetail(booking)}
+                            onClick={() =>
+                              booking && openBookingDetail(booking)
+                            }
                             className="text-blue-600 hover:text-blue-900 text-xs bg-blue-50 px-2 py-1 rounded"
                           >
                             Details
@@ -402,11 +431,13 @@ const BookingManagement: React.FC = () => {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
       />
-      <BookingDetailModal
-        isOpen={isDetailModalOpen}
-        onClose={() => setIsDetailModalOpen(false)}
-        booking={selectedBooking}
-      />
+      {selectedBooking && (
+        <BookingDetailModal
+          isOpen={isDetailModalOpen}
+          onClose={() => setIsDetailModalOpen(false)}
+          booking={selectedBooking}
+        />
+      )}
     </div>
   );
 };

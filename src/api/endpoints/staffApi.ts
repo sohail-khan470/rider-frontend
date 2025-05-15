@@ -58,12 +58,10 @@ export const staffApi = {
   },
 
   addStaff: async (companyId: number, data: any): Promise<Staff> => {
-    console.log(companyId, data);
     data.companyId = companyId;
     const response = await apiClient.post("/api/users", {
       data,
     });
-    console.log(response);
     return response.data;
   },
 };

@@ -4,15 +4,19 @@ import { Customer, CustomerResponse } from "../types/customer.types";
 
 export const customerApi = {
   // Company endpoints
-  getCompanyCustomers: async (): Promise<Customer[]> => {
-    const response = await apiClient.get("/api/company/customers");
+  getCompanyCustomers: async (companyId: number): Promise<Customer[]> => {
+    const response = await apiClient.get(`/api/company/${companyId}/customers`);
+    console.log(response);
     return response.data;
   },
 
   createCustomer: async (
     customerData: Omit<Customer, "id" | "createdAt" | "updatedAt">
   ): Promise<Customer> => {
-    const response = await apiClient.post("/company/customers", customerData);
+    const response = await apiClient.post(
+      "/api/company/customers",
+      customerData
+    );
     return response.data;
   },
 

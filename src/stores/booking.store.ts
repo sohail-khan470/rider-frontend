@@ -4,6 +4,8 @@ import { immer } from "zustand/middleware/immer";
 import { bookingApi } from "../api/endpoints/booking.api";
 import { Booking, BookingStatus } from "./types/booking.types";
 import { jwtDecode } from "jwt-decode";
+// Import your toast library
+import { toast } from "react-toastify"; // or your preferred toast library
 
 type BookingState = {
   bookings: Booking[];
@@ -51,11 +53,13 @@ export const useBookingStore = create<BookingState & BookingActions>()(
           state.loading = false;
         });
       } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to create booking";
         set({
-          error:
-            error instanceof Error ? error.message : "Failed to create booking",
+          error: errorMessage,
           loading: false,
         });
+        toast.error(errorMessage);
       }
     },
 
@@ -65,13 +69,15 @@ export const useBookingStore = create<BookingState & BookingActions>()(
         const bookings = await bookingApi.getCustomerBookings();
         set({ bookings, loading: false });
       } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch customer bookings";
         set({
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to fetch customer bookings",
+          error: errorMessage,
           loading: false,
         });
+        toast.error(errorMessage);
       }
     },
 
@@ -87,16 +93,17 @@ export const useBookingStore = create<BookingState & BookingActions>()(
         const response = (await bookingApi.getCompanyBookings(
           companyId
         )) as any;
-        console.log(response, "&&&&&&&&");
         set({ bookings: response.result, loading: false });
       } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch company bookings";
         set({
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to fetch company bookings",
+          error: errorMessage,
           loading: false,
         });
+        toast.error(errorMessage);
       }
     },
 
@@ -106,13 +113,15 @@ export const useBookingStore = create<BookingState & BookingActions>()(
         const bookings = await bookingApi.getDriverBookings();
         set({ bookings, loading: false });
       } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch driver bookings";
         set({
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to fetch driver bookings",
+          error: errorMessage,
           loading: false,
         });
+        toast.error(errorMessage);
       }
     },
 
@@ -130,11 +139,13 @@ export const useBookingStore = create<BookingState & BookingActions>()(
           state.loading = false;
         });
       } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to cancel booking";
         set({
-          error:
-            error instanceof Error ? error.message : "Failed to cancel booking",
+          error: errorMessage,
           loading: false,
         });
+        toast.error(errorMessage);
       }
     },
 
@@ -152,11 +163,13 @@ export const useBookingStore = create<BookingState & BookingActions>()(
           state.loading = false;
         });
       } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to assign driver";
         set({
-          error:
-            error instanceof Error ? error.message : "Failed to assign driver",
+          error: errorMessage,
           loading: false,
         });
+        toast.error(errorMessage);
       }
     },
 
@@ -174,13 +187,15 @@ export const useBookingStore = create<BookingState & BookingActions>()(
           state.loading = false;
         });
       } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to update booking status";
         set({
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to update booking status",
+          error: errorMessage,
           loading: false,
         });
+        toast.error(errorMessage);
       }
     },
 
@@ -198,11 +213,13 @@ export const useBookingStore = create<BookingState & BookingActions>()(
           state.loading = false;
         });
       } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to accept booking";
         set({
-          error:
-            error instanceof Error ? error.message : "Failed to accept booking",
+          error: errorMessage,
           loading: false,
         });
+        toast.error(errorMessage);
       }
     },
 
@@ -220,13 +237,13 @@ export const useBookingStore = create<BookingState & BookingActions>()(
           state.loading = false;
         });
       } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to complete booking";
         set({
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to complete booking",
+          error: errorMessage,
           loading: false,
         });
+        toast.error(errorMessage);
       }
     },
 

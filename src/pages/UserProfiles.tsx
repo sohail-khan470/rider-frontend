@@ -13,8 +13,6 @@ export default function UserProfiles() {
     getUserProfile();
   }, []);
 
-  console.log(user);
-
   return (
     <>
       <PageMeta

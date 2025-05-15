@@ -36,8 +36,6 @@ export const driverApi = {
   },
 
   getDriverById: async (id: number): Promise<Driver> => {
-    console.log("RRRRRRRRRRR");
-
     const response = await apiClient.get(`/api/drivers/${id}`);
     return response.data;
   },

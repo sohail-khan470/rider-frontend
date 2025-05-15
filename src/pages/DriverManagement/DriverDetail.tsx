@@ -14,8 +14,6 @@ const DriverDetail = () => {
   const { currentDriver, loading, error, fetchDriverById, updateDriverStatus } =
     useDriverStore();
 
-  console.log(currentDriver);
-
   useEffect(() => {
     if (id) {
       fetchDriverById(parseInt(id));

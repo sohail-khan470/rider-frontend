@@ -74,7 +74,6 @@ export const bookingApi = {
   },
 
   getBookingById: async (bookingId: number): Promise<Booking> => {
-    console.log("<<<<<<<<<");
     const response = await apiClient.get(`/api/bookings/${bookingId}`);
     return response.data;
   },

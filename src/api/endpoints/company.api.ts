@@ -1,11 +1,20 @@
 // src/api/endpoints/company.api.ts
 import apiClient from "../client";
 import { Company, CompanyAdmin, CompanyResponse } from "../types/company.types";
+import { Customer } from "../types/customer.types";
 
 export const companyApi = {
   // Super Admin endpoints
   getAllCompanies: async (): Promise<CompanyResponse> => {
     const response = await apiClient.get("/api/company");
+    return response.data;
+  },
+
+  getCompanyCustomers: async (companyId: number): Promise<Customer[]> => {
+    const response = (await apiClient.get(
+      `/api/company/${companyId}/customers`
+    )) as any;
+    console.log(response);
     return response.data;
   },
 

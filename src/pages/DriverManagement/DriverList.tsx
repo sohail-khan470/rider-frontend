@@ -12,8 +12,6 @@ const DriverList = () => {
 
   const [filters, setFilters] = useState<Record<string, any>>({});
 
-  console.log(filters, "FFFFFFFFFFF");
-
   // Memoized filter handler
   const handleFilterChange = useCallback((newFilters: Record<string, any>) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
