@@ -18,7 +18,10 @@ const BookingManagement: React.FC = () => {
   } = useBookingStore();
   const { fetchDrivers, drivers = [] } = useDriverStore();
 
-  const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
+  // const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
+  const [selectedDrivers, setSelectedDrivers] = useState<{
+    [key: number]: number | null;
+  }>({});
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -60,10 +63,19 @@ const BookingManagement: React.FC = () => {
   });
 
   // Handler for driver assignment
+  // const handleAssignDriver = async (bookingId: number) => {
+  //   if (selectedDriverId && bookingId) {
+  //     await assignDriver(bookingId, selectedDriverId);
+  //     setSelectedDriverId(null);
+  //   }
+  // };
   const handleAssignDriver = async (bookingId: number) => {
-    if (selectedDriverId && bookingId) {
-      await assignDriver(bookingId, selectedDriverId);
-      setSelectedDriverId(null);
+    const driverId = selectedDrivers[bookingId];
+    if (driverId && bookingId) {
+      await assignDriver(bookingId, driverId);
+
+      setSelectedDrivers((prev) => ({ ...prev, [bookingId]: null })); // Reset after assignment
+      fetchCompanyBookings();
     }
   };
 
@@ -74,6 +86,7 @@ const BookingManagement: React.FC = () => {
   ) => {
     if (bookingId) {
       await updateBookingStatus(bookingId, status);
+      fetchCompanyBookings();
     }
   };
 
@@ -309,7 +322,8 @@ const BookingManagement: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {booking?.dropoff || "N/A"}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+
+                      {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {booking?.driverId ? (
                           booking?.driver?.name || `Driver ${booking.driverId}`
                         ) : (
@@ -343,7 +357,48 @@ const BookingManagement: React.FC = () => {
                             </button>
                           </div>
                         )}
+                      </td> */}
+
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {booking?.driverId ? (
+                          booking?.driver?.name || `Driver ${booking.driverId}`
+                        ) : (
+                          <div className="flex items-center">
+                            <select
+                              className="rounded mr-2 text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                              value={selectedDrivers[booking.id] || ""}
+                              onChange={(e) => {
+                                const driverId = Number(e.target.value);
+                                setSelectedDrivers((prev) => ({
+                                  ...prev,
+                                  [booking.id]: driverId,
+                                }));
+                              }}
+                              disabled={booking?.status !== "pending"}
+                            >
+                              <option value="">Select Driver</option>
+                              {drivers.map((driver) => (
+                                <option key={driver?.id} value={driver?.id}>
+                                  {driver?.name || "Unknown Driver"}
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              onClick={() =>
+                                booking?.id && handleAssignDriver(booking.id)
+                              }
+                              disabled={
+                                !selectedDrivers[booking.id] ||
+                                booking?.status !== "pending"
+                              }
+                              className="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded disabled:opacity-50"
+                            >
+                              Assign
+                            </button>
+                          </div>
+                        )}
                       </td>
+
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(

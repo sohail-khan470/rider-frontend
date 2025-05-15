@@ -21,7 +21,7 @@ export default function App() {
   return (
     <Router>
       <ScrollToTop />
-      <ToastContainer position="top-right" />
+      <ToastContainer position="bottom-center" />
       <RouterConfig />
     </Router>
   );
