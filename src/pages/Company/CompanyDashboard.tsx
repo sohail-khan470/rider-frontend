@@ -42,6 +42,7 @@ export default function CompanyDashboard() {
   const { user } = useAuthStore() as any;
   const currentAdmins = useStaffStore().admin || [];
   const getAdmin = useStaffStore().getAdmin;
+  console.log(user);
 
   useEffect(() => {
     if (user) {
@@ -52,14 +53,14 @@ export default function CompanyDashboard() {
     }
   }, [user]);
 
-  const adminUser = currentCompany?.staff?.find(
-    (u: any) => u.role?.name === "Admin"
-  );
+  // const adminUser = currentCompany?.staff?.find(
+  //   (u: any) => u.role?.name === "Admin"
+  // );
 
   const admin = {
-    name: adminUser?.name || "N/A",
-    email: adminUser?.email || "N/A",
-    role: adminUser?.role?.name || "N/A",
+    name: user?.name || "N/A",
+    email: user?.email || "N/A",
+    role: user?.role || "N/A",
   };
 
   const company = {

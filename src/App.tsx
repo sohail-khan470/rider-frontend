@@ -9,10 +9,10 @@ export default function App() {
   const initialize = useAuthStore((state) => state.initialize);
   const user = useAuthStore((state) => state.user);
 
-  const permissions = user?.permissions;
-  if (permissions) {
-    console.log(permissions.some((item: string) => item === "manage_users"));
-  }
+  // const permissions = user?.permissions;
+  // if (permissions) {
+  //   console.log(permissions.some((item: string) => item === "manage_users"));
+  // }
 
   useEffect(() => {
     initialize();

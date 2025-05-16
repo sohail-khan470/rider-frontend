@@ -62,7 +62,7 @@ export const useStaffStore = create<StaffState>((set) => ({
       const companyId = decoded.companyId;
 
       const response = (await staffApi.addStaff(companyId, newStaff)) as any;
-      console.log(response);
+
       set((state) => ({
         staff: [...state.staff, response.data],
       }));

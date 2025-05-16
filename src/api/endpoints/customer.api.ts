@@ -6,7 +6,7 @@ export const customerApi = {
   // Company endpoints
   getCompanyCustomers: async (companyId: number): Promise<Customer[]> => {
     const response = await apiClient.get(`/api/company/${companyId}/customers`);
-    console.log(response);
+
     return response.data;
   },
 

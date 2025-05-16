@@ -70,8 +70,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         });
       }
     },
-
-    // Optional: Add logout function for completeness
     logout: () => {
       localStorage.removeItem("authToken");
       localStorage.removeItem("role");

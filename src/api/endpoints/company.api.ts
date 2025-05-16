@@ -14,7 +14,7 @@ export const companyApi = {
     const response = (await apiClient.get(
       `/api/company/${companyId}/customers`
     )) as any;
-    console.log(response);
+
     return response.data;
   },
 
