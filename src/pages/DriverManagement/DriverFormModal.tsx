@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Driver, DriverStatus } from "./types/driver.types";
 import { useDriverStore } from "../../stores";
 import { jwtDecode } from "jwt-decode";
+import { useCityStore } from "../../stores/city.store";
 
-// DriverFormModal component (inside the same file)
 interface DriverFormModalProps {
   driver: Driver | null;
   onClose: () => void;
@@ -13,8 +13,16 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
   driver,
   onClose,
 }) => {
-  const { createDriver, updateDriver, loading } = useDriverStore();
-  const [cities, setCities] = useState<any[]>([]);
+  const {
+    drivers,
+    createDriver,
+    updateDriver,
+    loading,
+    fetchDrivers,
+    updateDriverStatus,
+  } = useDriverStore();
+  const { cities, fetchCities, loading: citiesLoading } = useCityStore();
+
   const [formData, setFormData] = useState({
     name: driver?.name || "",
     email: driver?.email || "",
@@ -26,36 +34,45 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
   });
 
   useEffect(() => {
-    // Fetch cities - in a real app you would need to create a city API and store
-    const fetchCities = async () => {
-      try {
-        const response = await fetch("/api/cities");
-        const data = await response.json();
-        setCities(data);
-      } catch (error) {
-        console.error("Failed to fetch cities:", error);
-        // Use some default cities for demo purposes
-        setCities([
-          { id: 1, name: "New York" },
-          { id: 2, name: "Los Angeles" },
-          { id: 3, name: "Chicago" },
-        ]);
-      }
-    };
-
+    // Fetch cities from the city store
+    fetchDrivers();
     fetchCities();
   }, []);
 
-  const handleChange = (
+  // const handleChange = (
+  //   e: React.ChangeEvent<
+  //     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  //   >
+  // ) => {
+  //   const { name, value } = e.target;
+  //   setFormData({
+  //     ...formData,
+  //     [name]: name === "cityId" ? Number(value) : value,
+  //   });
+  //   fetchDrivers();
+  // };
+
+  const handleChange = async (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
     const { name, value } = e.target;
+
+    // Update local form state
     setFormData({
       ...formData,
       [name]: name === "cityId" ? Number(value) : value,
     });
+
+    // If changing status and we have a driver, update in the store
+    if (name === "status" && driver) {
+      try {
+        await updateDriverStatus(driver.id, value as DriverStatus);
+      } catch (error) {
+        console.error("Failed to update status:", error);
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,8 +92,10 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
     try {
       if (driver) {
         await updateDriver(driver.id, driverData);
+        fetchDrivers();
       } else {
         await createDriver(driverData as any);
+        await fetchDrivers();
       }
       onClose();
     } catch (error) {
@@ -178,21 +197,30 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
             >
               City
             </label>
-            <select
-              id="cityId"
-              name="cityId"
-              value={formData.cityId}
-              onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              required
-            >
-              <option value="">Select a city</option>
-              {cities.map((city) => (
-                <option key={city.id} value={city.id}>
-                  {city.name}
-                </option>
-              ))}
-            </select>
+            {citiesLoading ? (
+              <select
+                disabled
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              >
+                <option>Loading cities...</option>
+              </select>
+            ) : (
+              <select
+                id="cityId"
+                name="cityId"
+                value={formData.cityId}
+                onChange={handleChange}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                required
+              >
+                <option value="">Select a city</option>
+                {cities.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           <div className="mb-4">
@@ -244,7 +272,7 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
             <button
               type="submit"
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              disabled={loading}
+              disabled={loading || citiesLoading}
             >
               {loading ? (
                 <span>Saving...</span>

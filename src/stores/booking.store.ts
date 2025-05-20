@@ -150,6 +150,7 @@ export const useBookingStore = create<BookingState & BookingActions>()(
     },
 
     assignDriver: async (bookingId: number, driverId: number) => {
+      console.log("@ASSIGN DRIVER");
       set({ loading: true, error: null });
       try {
         const booking = await bookingApi.assignDriver(bookingId, driverId);
@@ -162,18 +163,21 @@ export const useBookingStore = create<BookingState & BookingActions>()(
           }
           state.loading = false;
         });
-      } catch (error: unknown) {
+      } catch (error: any) {
+        console.log(error.response.data);
+        const message = error.response.data.message;
         const errorMessage =
           error instanceof Error ? error.message : "Failed to assign driver";
         set({
-          error: errorMessage,
+          error: message,
           loading: false,
         });
-        toast.error(errorMessage);
+        toast.error(message);
       }
     },
 
     updateBookingStatus: async (bookingId: number, status: BookingStatus) => {
+      console.log("@Update Booking status");
       set({ loading: true, error: null });
       try {
         const booking = await bookingApi.updateBookingStatus(bookingId, status);
@@ -187,6 +191,7 @@ export const useBookingStore = create<BookingState & BookingActions>()(
           state.loading = false;
         });
       } catch (error: unknown) {
+        console.log(error);
         const errorMessage =
           error instanceof Error
             ? error.message

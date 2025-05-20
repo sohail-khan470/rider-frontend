@@ -204,7 +204,6 @@ export const useDriverStore = create<DriverState & DriverActions>()(
       }
     },
 
-    // updateDriverStatus: async (id: number, status: DriverStatus) => {
     //   set({ loading: true, error: null });
     //   try {
     //     const driver = await driverApi.updateDriverStatus(id, status);
@@ -232,10 +231,47 @@ export const useDriverStore = create<DriverState & DriverActions>()(
     //   }
     // },
 
+    // updateDriverStatus: async (id: number, status: DriverStatus) => {
+    //   console.log("@update drive is called");
+    //   set({ loading: true, error: null });
+    //   try {
+    //     const driver = await driverApi.updateDriverStatus(id, status);
+    //     set((state) => ({
+    //       drivers: state.drivers.map((d) => (d.id === id ? driver : d)),
+    //       currentDriver:
+    //         state.currentDriver?.id === id ? driver : state.currentDriver,
+    //       loading: false,
+    //     }));
+    //     toast.success(`Driver status updated to ${status}`);
+    //   } catch (error: unknown) {
+    //     const errorMessage =
+    //       error instanceof Error
+    //         ? error.message
+    //         : "Failed to update driver status";
+    //     set({
+    //       error: errorMessage,
+    //       loading: false,
+    //     });
+    //     toast.error(errorMessage);
+    //   }
+    // },
+
     updateDriverStatus: async (id: number, status: DriverStatus) => {
-      set({ loading: true, error: null });
+      console.log("@update drive is called");
+      set((state) => ({
+        loading: true,
+        error: null,
+        // Optimistic update
+        drivers: state.drivers.map((d) => (d.id === id ? { ...d, status } : d)),
+        currentDriver:
+          state.currentDriver?.id === id
+            ? { ...state.currentDriver, status }
+            : state.currentDriver,
+      }));
+
       try {
         const driver = await driverApi.updateDriverStatus(id, status);
+        // Final update with confirmed data
         set((state) => ({
           drivers: state.drivers.map((d) => (d.id === id ? driver : d)),
           currentDriver:
@@ -244,15 +280,20 @@ export const useDriverStore = create<DriverState & DriverActions>()(
         }));
         toast.success(`Driver status updated to ${status}`);
       } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Failed to update driver status";
-        set({
-          error: errorMessage,
+        // Rollback on error
+        set((state) => ({
+          drivers: state.drivers.map((d) =>
+            d.id === id
+              ? { ...d, status: state.currentDriver?.status || d.status }
+              : d
+          ),
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to update driver status",
           loading: false,
-        });
-        toast.error(errorMessage);
+        }));
+        toast.error("Failed to update driver status");
       }
     },
     updateDriverLocation: async (id: number, location: LocationData) => {
