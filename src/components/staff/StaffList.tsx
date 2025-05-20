@@ -22,8 +22,11 @@ export default function StaffList() {
     setIsModalOpen(true);
   };
 
+  console.log(staff);
+
   const handleUpdate = async (id: number, data: StaffFormValues) => {
     try {
+      console.log("LLLLLLLLLLLL");
       await staffApi.updateStaff(id, data);
       updateStaff(id, data);
       fetchStaff(); // Refresh the list

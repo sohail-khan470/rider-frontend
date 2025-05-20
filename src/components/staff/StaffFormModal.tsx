@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Staff, StaffFormValues } from "./types";
+import { useRoleStore } from "../../stores";
 
 interface StaffFormModalProps {
   isOpen: boolean;
@@ -18,18 +19,24 @@ export default function StaffFormModal({
     name: "",
     email: "",
     roleId: 0,
+    password: "",
   });
+
+  const { roles, fetchRoles } = useRoleStore();
 
   const [errors, setErrors] = useState<
     Partial<Record<keyof StaffFormValues, string>>
   >({});
+  const [showPasswordField, setShowPasswordField] = useState(false);
 
   useEffect(() => {
+    fetchRoles();
     if (staff) {
       setFormData({
         name: staff.name,
         email: staff.email,
         roleId: staff.role.id,
+        password: "",
       });
     }
   }, [staff]);
@@ -57,6 +64,13 @@ export default function StaffFormModal({
     }
     if (!formData.roleId) newErrors.roleId = "Role is required";
 
+    // Only validate password if the field is shown and not empty
+    if (showPasswordField && formData.password) {
+      if (formData.password.length < 8) {
+        newErrors.password = "Password must be at least 8 characters";
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -64,8 +78,18 @@ export default function StaffFormModal({
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!staff || !validate()) return;
+
+    // Prepare data to submit - exclude password if not provided
+    const submitData = {
+      name: formData.name,
+      email: formData.email,
+      roleId: formData.roleId,
+      ...(showPasswordField &&
+        formData.password && { password: formData.password }),
+    };
+
     try {
-      await onSubmit(staff.id, formData);
+      await onSubmit(staff.id, submitData);
       onClose();
     } catch (error) {
       console.error("Error updating staff:", error);
@@ -127,7 +151,7 @@ export default function StaffFormModal({
               )}
             </div>
 
-            <div className="mb-6">
+            <div className="mb-4">
               <label
                 htmlFor="roleId"
                 className="block text-sm font-medium text-gray-700 mb-1"
@@ -144,14 +168,62 @@ export default function StaffFormModal({
                 }`}
               >
                 <option value="">Select a role</option>
-                <option value={1}>Company Admin</option>
-                <option value={2}>Manager</option>
-                <option value={3}>Staff</option>
+                {roles.map((role) => (
+                  <option key={role.id} value={role.id}>
+                    {role.name}
+                  </option>
+                ))}
               </select>
               {errors.roleId && (
                 <p className="mt-1 text-sm text-red-600">{errors.roleId}</p>
               )}
             </div>
+
+            {!showPasswordField ? (
+              <div className="mb-4">
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordField(true)}
+                  className="text-sm text-indigo-600 hover:text-indigo-500"
+                >
+                  Change Password
+                </button>
+              </div>
+            ) : (
+              <div className="mb-4">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  New Password (optional)
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={`w-full px-3 py-2 border rounded-md ${
+                    errors.password ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder="Leave empty to keep current password"
+                />
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPasswordField(false);
+                    setFormData((prev) => ({ ...prev, password: "" }));
+                    setErrors((prev) => ({ ...prev, password: undefined }));
+                  }}
+                  className="mt-2 text-sm text-gray-600 hover:text-gray-500"
+                >
+                  Cancel password change
+                </button>
+              </div>
+            )}
 
             <div className="flex justify-end space-x-3">
               <button

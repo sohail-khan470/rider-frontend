@@ -16,14 +16,16 @@ export const staffApi = {
     updates: Partial<Staff>
   ): Promise<Staff> => {
     const response = await apiClient.patch(
-      `/companies/staff/${staffId}`,
+      `/api/company/staff/${staffId}`,
       updates
     );
+
+    console.log(response);
     return response.data;
   },
 
   deleteStaff: async (staffId: number): Promise<void> => {
-    await apiClient.delete(`/companies/staff/${staffId}`);
+    await apiClient.delete(`/company/staff/${staffId}`);
   },
 
   // Staff endpoints

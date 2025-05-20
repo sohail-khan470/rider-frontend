@@ -26,12 +26,26 @@ export const useStaffStore = create<StaffState>((set) => ({
   selectStaff: (staff) => set({ selectedStaff: staff }),
   clearSelectedStaff: () => set({ selectedStaff: null }),
 
-  updateStaff: (id, updatedStaff) =>
-    set((state) => ({
-      staff: state.staff.map((staff) =>
-        staff.id === id ? { ...staff, ...updatedStaff } : staff
-      ),
-    })),
+  // updateStaff: (id, updatedStaff) =>
+  //   set((state) => ({
+  //     staff: state.staff.map((staff) =>
+  //       staff.id === id ? { ...staff, ...updatedStaff } : staff
+  //     ),
+  //   })),
+
+  updateStaff: async (id, data) => {
+    try {
+      const response = (await staffApi.updateStaff(id, data)) as any;
+      const updated = response.data;
+      console.log(response);
+      set((state) => ({
+        staff: state.staff.map((s) => (s.id === id ? updated : s)),
+      }));
+    } catch (error) {
+      console.error("Error updating staff in store:", error);
+      throw error;
+    }
+  },
 
   removeStaff: (id) =>
     set((state) => ({
