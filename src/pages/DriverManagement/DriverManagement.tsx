@@ -23,11 +23,11 @@ const DriverManagement: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
 
-  // console.log(currentDriver);
-
   useEffect(() => {
     fetchDrivers();
-  }, [drivers]);
+  }, []);
+
+  console.log(drivers[0]);
 
   const handleViewDriver = (id: number) => {
     fetchDriverById(id);
@@ -47,7 +47,6 @@ const DriverManagement: React.FC = () => {
   const handleUpdateStatus = async (id: number, status: DriverStatus) => {
     try {
       await updateDriverStatus(id, status);
-      // Remove fetchDrivers() call here
     } catch (error) {
       console.error("Status update failed:", error);
     }

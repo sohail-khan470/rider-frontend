@@ -203,99 +203,33 @@ export const useDriverStore = create<DriverState & DriverActions>()(
         toast.error(errorMessage);
       }
     },
-
-    //   set({ loading: true, error: null });
-    //   try {
-    //     const driver = await driverApi.updateDriverStatus(id, status);
-    //     set((state) => {
-    //       const index = state.drivers.findIndex((d) => d.id === id);
-    //       if (index !== -1) {
-    //         state.drivers[index] = driver;
-    //       }
-    //       if (state.currentDriver?.id === id) {
-    //         state.currentDriver = driver;
-    //       }
-    //       state.loading = false;
-    //     });
-    //     toast.success(`Driver status updated to ${status}`);
-    //   } catch (error: unknown) {
-    //     const errorMessage =
-    //       error instanceof Error
-    //         ? error.message
-    //         : "Failed to update driver status";
-    //     set({
-    //       error: errorMessage,
-    //       loading: false,
-    //     });
-    //     toast.error(errorMessage);
-    //   }
-    // },
-
-    // updateDriverStatus: async (id: number, status: DriverStatus) => {
-    //   console.log("@update drive is called");
-    //   set({ loading: true, error: null });
-    //   try {
-    //     const driver = await driverApi.updateDriverStatus(id, status);
-    //     set((state) => ({
-    //       drivers: state.drivers.map((d) => (d.id === id ? driver : d)),
-    //       currentDriver:
-    //         state.currentDriver?.id === id ? driver : state.currentDriver,
-    //       loading: false,
-    //     }));
-    //     toast.success(`Driver status updated to ${status}`);
-    //   } catch (error: unknown) {
-    //     const errorMessage =
-    //       error instanceof Error
-    //         ? error.message
-    //         : "Failed to update driver status";
-    //     set({
-    //       error: errorMessage,
-    //       loading: false,
-    //     });
-    //     toast.error(errorMessage);
-    //   }
-    // },
-
-    updateDriverStatus: async (id: number, status: DriverStatus) => {
-      console.log("@update drive is called");
-      set((state) => ({
-        loading: true,
-        error: null,
-        // Optimistic update
-        drivers: state.drivers.map((d) => (d.id === id ? { ...d, status } : d)),
-        currentDriver:
-          state.currentDriver?.id === id
-            ? { ...state.currentDriver, status }
-            : state.currentDriver,
-      }));
+    updateDriverStatus: async (id, status) => {
+      console.log("@update drive is called", id, status),
+        set((state) => ({
+          drivers: state.drivers.map(
+            (d) => (d.id === id ? { ...d, status } : d) // Immediate optimistic update
+          ),
+        }));
 
       try {
-        const driver = await driverApi.updateDriverStatus(id, status);
-        // Final update with confirmed data
-        set((state) => ({
-          drivers: state.drivers.map((d) => (d.id === id ? driver : d)),
-          currentDriver:
-            state.currentDriver?.id === id ? driver : state.currentDriver,
-          loading: false,
-        }));
-        toast.success(`Driver status updated to ${status}`);
-      } catch (error: unknown) {
-        // Rollback on error
+        const driver = (await driverApi.updateDriverStatus(id, status)) as any;
+        const updatedDriver = driver.data;
+        // Final confirmation update
         set((state) => ({
           drivers: state.drivers.map((d) =>
-            d.id === id
-              ? { ...d, status: state.currentDriver?.status || d.status }
-              : d
+            d.id === id ? { ...d, updatedDriver } : d
           ),
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to update driver status",
-          loading: false,
         }));
-        toast.error("Failed to update driver status");
+      } catch (error) {
+        // Rollback
+        set((state) => ({
+          drivers: state.drivers.map(
+            (d) => (d.id === id ? { ...d, status: d.status } : d) // Revert to original status
+          ),
+        }));
       }
     },
+
     updateDriverLocation: async (id: number, location: LocationData) => {
       set({ loading: true, error: null });
       try {

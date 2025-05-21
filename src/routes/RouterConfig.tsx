@@ -56,17 +56,17 @@ export const RouterConfig = () => {
         <Route element={<RoleRoute type={["admin"]} />}>
           <Route element={<AppLayout />}>
             <Route path="/company/home" element={<CompanyDashboard />} />
-            <Route path="/profile" element={<UserProfiles />} />
-            <Route path="/bookings" element={<BookingManagement />} />
-            <Route path="/staff" element={<StaffManagement />} />
-            <Route path="/settings" element={<CompanySettings />} />
+            <Route path="/company/profile" element={<UserProfiles />} />
+            <Route path="/company/bookings" element={<BookingManagement />} />
+            <Route path="/company/staff" element={<StaffManagement />} />
+            <Route path="/company/settings" element={<CompanySettings />} />
           </Route>
         </Route>
       </Route>
       <Route element={<ProtectedRoute />}>
         <Route element={<RoleRoute type={["admin", "super_admin"]} />}>
           <Route element={<AppLayout />}>
-            <Route path="/drivers" element={<DriverManagement />} />
+            <Route path="/company/drivers" element={<DriverManagement />} />
           </Route>
         </Route>
       </Route>

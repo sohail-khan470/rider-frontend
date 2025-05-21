@@ -24,80 +24,40 @@ const superAdminItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    subItems: [{ name: "Listings", path: "/", pro: false }],
-  },
-  {
-    name: "Tables",
-    icon: <TableIcon />,
-    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
+    path: "/",
   },
 ];
 
-// const companyAdminItems: NavItem[] = [
-//   {
-//     icon: <GridIcon />,
-//     name: "Dashboard",
-//     subItems: [{ name: "Listings", path: "/company/home", pro: false }],
-//   },
-//   {
-//     icon: <UserCircleIcon />,
-//     name: "Admin Detail",
-//     path: "/profile",
-//   },
-//   {
-//     name: "Bookings Management",
-//     icon: <TableIcon />,
-//     path: "/bookings",
-//   },
-//   {
-//     name: "Staff Management",
-//     icon: <PageIcon />,
-//     // subItems: [
-//     //   { name: "Blank Page", path: "/blank", pro: false },
-//     //   { name: "404 Error", path: "/error-404", pro: false },
-//     // ],
-//     path: "/staff",
-//   },
-//   {
-//     name: "Company Settings",
-//     icon: <LockIcon />,
-//     path: "/settings",
-//   },
-// ];
 const companyAdminItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    subItems: [{ name: "Listings", path: "/company/home", pro: false }],
+    path: "/company/home",
   },
   {
     icon: <UserCircleIcon />,
     name: "Admin Detail",
-    path: "/profile",
+    path: "/company/profile",
   },
   {
     name: "Bookings Management",
     icon: <TableIcon />,
-    path: "/bookings",
+    path: "/company/bookings",
   },
   {
     name: "Drivers Management",
     icon: <UserCircleIcon />,
-    // You can either have direct path or submenu
-    subItems: [
-      { name: "All Drivers", path: "/drivers", pro: false },
-      { name: "Add Driver", path: "/drivers/new", pro: false },
-    ],
+    path: "/company/drivers",
   },
   {
     name: "Staff Management",
     icon: <PageIcon />,
-    path: "/staff",
+    path: "/company/staff",
   },
   {
-    name: "Company Settings",
+    name: "Company Management",
     icon: <LockIcon />,
-    path: "/settings",
+    path: "/company/management",
   },
 ];
 
@@ -119,7 +79,7 @@ const AppSidebar: React.FC = () => {
   // Check localStorage on component mount and when it changes
   useEffect(() => {
     const checkUser = () => {
-      const isSuperAdmin = localStorage.getItem("role") === "superAdmin";
+      const isSuperAdmin = localStorage.getItem("role") === "super_admin";
       const role = localStorage.getItem("role");
 
       setCurrentNavItems(isSuperAdmin ? superAdminItems : companyAdminItems);
