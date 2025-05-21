@@ -37,7 +37,7 @@ export const useStaffStore = create<StaffState>((set) => ({
     try {
       const response = (await staffApi.updateStaff(id, data)) as any;
       const updated = response.data;
-      console.log(response);
+      console.log(updated);
       set((state) => ({
         staff: state.staff.map((s) => (s.id === id ? updated : s)),
       }));

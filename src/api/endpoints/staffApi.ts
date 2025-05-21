@@ -19,8 +19,6 @@ export const staffApi = {
       `/api/company/staff/${staffId}`,
       updates
     );
-
-    console.log(response);
     return response.data;
   },
 

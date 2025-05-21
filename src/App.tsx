@@ -21,7 +21,18 @@ export default function App() {
   return (
     <Router>
       <ScrollToTop />
-      <ToastContainer position="bottom-center" />
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <RouterConfig />
     </Router>
   );

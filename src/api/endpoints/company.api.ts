@@ -19,9 +19,7 @@ export const companyApi = {
   },
 
   approveCompany: async (companyId: number): Promise<Company> => {
-    const response = await apiClient.patch(
-      `/super-admin/companies/${companyId}/approve`
-    );
+    const response = await apiClient.patch(`/api/company/${companyId}/approve`);
     return response.data;
   },
 
@@ -29,7 +27,7 @@ export const companyApi = {
   register: async (
     companyData: Omit<Company, "id" | "createdAt" | "isApproved">
   ): Promise<Company> => {
-    const response = await apiClient.post("/companies/register", companyData);
+    const response = await apiClient.post("/api/company/register", companyData);
     return response.data;
   },
 
@@ -76,6 +74,15 @@ export const companyApi = {
 
   getCompanyById: async (id: number) => {
     const response = await apiClient.get(`/api/company/${id}`);
+    return response.data;
+  },
+
+  editCompany: async (id: number, data: any) => {
+    const response = await apiClient.patch(`/api/company/${id}`, data);
+    return response.data;
+  },
+  deleteCompany: async (id: number) => {
+    const response = await apiClient.delete(`/api/company/${id}`);
     return response.data;
   },
 };

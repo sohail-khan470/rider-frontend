@@ -27,7 +27,7 @@ const DriverManagement: React.FC = () => {
     fetchDrivers();
   }, []);
 
-  console.log(drivers[0]);
+  console.log(currentDriver);
 
   const handleViewDriver = (id: number) => {
     fetchDriverById(id);

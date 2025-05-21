@@ -72,7 +72,7 @@ export type AvailabilityData = {
 
 type DriverState = {
   drivers: Driver[];
-  currentDriver: Driver | null;
+  currentDriver: any | null;
   loading: boolean;
   error: string | null;
 };
@@ -142,8 +142,9 @@ export const useDriverStore = create<DriverState & DriverActions>()(
     fetchDriverById: async (id: number) => {
       set({ loading: true, error: null });
       try {
-        const driver = await driverApi.getDriverById(id);
-        set({ currentDriver: driver, loading: false });
+        const driver = (await driverApi.getDriverById(id)) as any;
+        console.log(driver);
+        set({ currentDriver: driver.data, loading: false });
       } catch (error: unknown) {
         const errorMessage =
           error instanceof Error ? error.message : "Failed to fetch driver";

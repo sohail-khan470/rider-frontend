@@ -4,17 +4,10 @@ import { useStaffStore } from "../../stores";
 import { useState } from "react";
 import { staffApi } from "../../api/endpoints/staffApi";
 import { Staff, StaffFormValues } from "./types";
-//import { useStaffStore } from "../stores/staffStore";
 
 export default function StaffList() {
-  const {
-    staff,
-    selectedStaff,
-    selectStaff,
-    clearSelectedStaff,
-    fetchStaff,
-    updateStaff,
-  } = useStaffStore();
+  const { staff, selectedStaff, selectStaff, clearSelectedStaff } =
+    useStaffStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleEdit = (staff: Staff) => {
@@ -22,14 +15,9 @@ export default function StaffList() {
     setIsModalOpen(true);
   };
 
-  console.log(staff);
-
   const handleUpdate = async (id: number, data: StaffFormValues) => {
     try {
-      console.log("LLLLLLLLLLLL");
       await staffApi.updateStaff(id, data);
-      updateStaff(id, data);
-      fetchStaff(); // Refresh the list
     } catch (error) {
       console.error("Error updating staff:", error);
       throw error;

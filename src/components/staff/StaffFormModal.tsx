@@ -22,6 +22,8 @@ export default function StaffFormModal({
     password: "",
   });
 
+  console.log(staff, "^^^^^^^^^^^^");
+
   const { roles, fetchRoles } = useRoleStore();
 
   const [errors, setErrors] = useState<
@@ -79,7 +81,6 @@ export default function StaffFormModal({
     e.preventDefault();
     if (!staff || !validate()) return;
 
-    // Prepare data to submit - exclude password if not provided
     const submitData = {
       name: formData.name,
       email: formData.email,
@@ -89,8 +90,8 @@ export default function StaffFormModal({
     };
 
     try {
-      await onSubmit(staff.id, submitData);
-      onClose();
+      await onSubmit(staff.id, submitData); // Wait for this to complete
+      onClose(); // Then close the modal
     } catch (error) {
       console.error("Error updating staff:", error);
     }

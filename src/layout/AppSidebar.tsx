@@ -26,6 +26,16 @@ const superAdminItems: NavItem[] = [
     name: "Dashboard",
     path: "/",
   },
+  {
+    icon: <GridIcon />,
+    name: "Company Management",
+    path: "/company-management",
+  },
+  {
+    icon: <GridIcon />,
+    name: "Company Admin Management",
+    path: "/company-admin-management",
+  },
 ];
 
 const companyAdminItems: NavItem[] = [

@@ -17,6 +17,7 @@ import StaffManagement from "../pages/StaffManagement/StaffManagement";
 import CompanySettings from "../pages/Company/CompanySettings";
 import PublicRoute from "./PublicRoute";
 import DriverManagement from "../pages/DriverManagement/DriverManagement";
+import CompanyManagementDashboard from "../pages/Company/CompanyManagement";
 
 export const RouterConfig = () => {
   return (
@@ -46,6 +47,10 @@ export const RouterConfig = () => {
         <Route element={<RoleRoute type={["super_admin"]} />}>
           <Route element={<AppLayout />}>
             <Route path="/" element={<Home />} />
+            <Route
+              path="/company-management"
+              element={<CompanyManagementDashboard />}
+            />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/form-elements" element={<FormElements />} />
             <Route path="/alerts" element={<Alerts />} />

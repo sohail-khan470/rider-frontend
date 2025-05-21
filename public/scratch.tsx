@@ -1,0 +1,616 @@
+import { useState, useEffect } from "react";
+import {
+  PlusCircle,
+  Edit,
+  Trash2,
+  CheckCircle,
+  XCircle,
+  Users,
+  Car,
+  Calendar,
+  Search,
+  ChevronDown,
+  ChevronUp,
+  MoreHorizontal,
+} from "lucide-react";
+import { useCompanyStore } from "../store/company.store";
+import { Company } from "../store/types/company.types";
+
+export default function CompanyManagementDashboard() {
+  // Use company store
+  const {
+    companies,
+    loading,
+    error,
+    fetchAllCompanies,
+    approveCompany: approveCompanyAction,
+  } = useCompanyStore();
+
+  // Local state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortField, setSortField] = useState<string>("createdAt");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
+  const [showEditCompanyModal, setShowEditCompanyModal] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+  const [companyToDelete, setCompanyToDelete] = useState<number | null>(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  // Fetch companies on component mount
+  useEffect(() => {
+    fetchAllCompanies();
+  }, [fetchAllCompanies]);
+
+  // Functions for company management
+  const handleApproveCompany = async (id: number) => {
+    try {
+      await approveCompanyAction(id);
+    } catch (error) {
+      console.error("Error approving company:", error);
+    }
+  };
+
+  const handleDeleteCompany = async () => {
+    if (!companyToDelete) return;
+
+    try {
+      // API call would be implemented here
+      // For now, we'll just close the modal since delete API isn't in the store
+      setShowDeleteConfirmation(false);
+      setCompanyToDelete(null);
+      // After implementing delete API, we'd refetch companies
+      fetchAllCompanies();
+    } catch (error) {
+      console.error("Error deleting company:", error);
+    }
+  };
+
+  const handleEditClick = (company: Company) => {
+    setSelectedCompany(company);
+    setShowEditCompanyModal(true);
+  };
+
+  const handleDeleteClick = (id: number) => {
+    setCompanyToDelete(id);
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleViewCompanyDetails = (id: number) => {
+    // Navigate to company details page
+    // In a real app with router: navigate(`/companies/${id}`);
+    console.log("View company details:", id);
+  };
+
+  // Filtering and sorting
+  const statusFilteredCompanies =
+    statusFilter === "all"
+      ? companies
+      : companies.filter((company) =>
+          statusFilter === "approved" ? company.isApproved : !company.isApproved
+        );
+
+  const filteredCompanies = statusFilteredCompanies.filter(
+    (company) =>
+      company.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      company.email?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const sortedCompanies = [...filteredCompanies].sort((a, b) => {
+    let compareA: any = a[sortField as keyof Company];
+    let compareB: any = b[sortField as keyof Company];
+
+    if (sortField === "createdAt") {
+      compareA = new Date(compareA || "").getTime();
+      compareB = new Date(compareB || "").getTime();
+    }
+
+    if (compareA < compareB) return sortDirection === "asc" ? -1 : 1;
+    if (compareA > compareB) return sortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const toggleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  // Format date to readable string
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  // For displaying the sort indicator
+  const getSortIndicator = (field: string) => {
+    if (sortField !== field) return null;
+    return sortDirection === "asc" ? (
+      <ChevronUp size={16} />
+    ) : (
+      <ChevronDown size={16} />
+    );
+  };
+
+  // Get counts for stats section
+  const approvedCompaniesCount = companies.filter((c) => c.isApproved).length;
+  const pendingCompaniesCount = companies.filter((c) => !c.isApproved).length;
+
+  return (
+    <div className="bg-gray-50 min-h-screen p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">
+            Company Management
+          </h1>
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700 transition"
+            onClick={() => setShowAddCompanyModal(true)}
+          >
+            <PlusCircle size={18} />
+            Add Company
+          </button>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-medium text-gray-700">
+              Total Companies
+            </h3>
+            <p className="text-3xl font-bold mt-2">{companies.length}</p>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-medium text-gray-700">
+              Approved Companies
+            </h3>
+            <p className="text-3xl font-bold mt-2 text-green-600">
+              {approvedCompaniesCount}
+            </p>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-medium text-gray-700">
+              Pending Approval
+            </h3>
+            <p className="text-3xl font-bold mt-2 text-amber-600">
+              {pendingCompaniesCount}
+            </p>
+          </div>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="bg-white p-4 rounded-lg shadow mb-6">
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
+            <div className="relative flex-grow">
+              <Search
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={18}
+              />
+              <input
+                type="text"
+                placeholder="Search companies by name or email..."
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-600">Status:</span>
+              <select
+                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="all">All</option>
+                <option value="approved">Approved</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+            <p>{error}</p>
+          </div>
+        )}
+
+        {/* Companies Table */}
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      onClick={() => toggleSort("name")}
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Company Name</span>
+                        {getSortIndicator("name")}
+                      </div>
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      onClick={() => toggleSort("email")}
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Email</span>
+                        {getSortIndicator("email")}
+                      </div>
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      onClick={() => toggleSort("isApproved")}
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Status</span>
+                        {getSortIndicator("isApproved")}
+                      </div>
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      onClick={() => toggleSort("createdAt")}
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Date Created</span>
+                        {getSortIndicator("createdAt")}
+                      </div>
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Stats
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {sortedCompanies.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={6}
+                        className="px-6 py-4 text-center text-gray-500"
+                      >
+                        {searchQuery
+                          ? "No companies matching your search criteria"
+                          : "No companies found"}
+                      </td>
+                    </tr>
+                  ) : (
+                    sortedCompanies.map((company) => (
+                      <tr key={company.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">
+                            {company.name || "N/A"}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-500">
+                            {company.email || "N/A"}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {company.isApproved ? (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              Approved
+                            </span>
+                          ) : (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                              Pending
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {formatDate(company.createdAt)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex space-x-3 text-xs text-gray-500">
+                            <div className="flex items-center">
+                              <Users size={14} className="mr-1" />
+                              <span>{company._count?.customers || 0}</span>
+                            </div>
+                            <div className="flex items-center">
+                              <Car size={14} className="mr-1" />
+                              <span>{company._count?.drivers || 0}</span>
+                            </div>
+                            <div className="flex items-center">
+                              <Calendar size={14} className="mr-1" />
+                              <span>{company._count?.bookings || 0}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <div className="flex justify-end space-x-2">
+                            {!company.isApproved && (
+                              <button
+                                onClick={() => handleApproveCompany(company.id)}
+                                className="text-green-600 hover:text-green-900"
+                                title="Approve Company"
+                              >
+                                <CheckCircle size={18} />
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleEditClick(company)}
+                              className="text-blue-600 hover:text-blue-900"
+                              title="Edit Company"
+                            >
+                              <Edit size={18} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(company.id)}
+                              className="text-red-600 hover:text-red-900"
+                              title="Delete Company"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleViewCompanyDetails(company.id)
+                              }
+                              className="text-gray-600 hover:text-gray-900"
+                              title="View Details"
+                            >
+                              <MoreHorizontal size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+        {/* Add Company Modal */}
+        {showAddCompanyModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Add New Company
+                </h3>
+                <button
+                  onClick={() => setShowAddCompanyModal(false)}
+                  className="text-gray-400 hover:text-gray-500"
+                >
+                  <XCircle size={20} />
+                </button>
+              </div>
+              <form className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="timezone"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Timezone
+                  </label>
+                  <select
+                    id="timezone"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="UTC">UTC</option>
+                    <option value="America/New_York">America/New_York</option>
+                    <option value="Europe/London">Europe/London</option>
+                    <option value="Asia/Singapore">Asia/Singapore</option>
+                    <option value="Australia/Sydney">Australia/Sydney</option>
+                  </select>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="approved"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label
+                    htmlFor="approved"
+                    className="ml-2 block text-sm text-gray-900"
+                  >
+                    Approve Immediately
+                  </label>
+                </div>
+                <div className="flex justify-end space-x-3 pt-4">
+                  <button
+                    type="button"
+                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    onClick={() => setShowAddCompanyModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Add Company
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Company Modal */}
+        {showEditCompanyModal && selectedCompany && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Edit Company
+                </h3>
+                <button
+                  onClick={() => setShowEditCompanyModal(false)}
+                  className="text-gray-400 hover:text-gray-500"
+                >
+                  <XCircle size={20} />
+                </button>
+              </div>
+              <form className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="edit-name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    id="edit-name"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                    defaultValue={selectedCompany.name}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="edit-email"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="edit-email"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                    defaultValue={selectedCompany.email}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="edit-timezone"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Timezone
+                  </label>
+                  <select
+                    id="edit-timezone"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                    defaultValue={selectedCompany.timezone}
+                  >
+                    <option value="UTC">UTC</option>
+                    <option value="America/New_York">America/New_York</option>
+                    <option value="Europe/London">Europe/London</option>
+                    <option value="Asia/Singapore">Asia/Singapore</option>
+                    <option value="Australia/Sydney">Australia/Sydney</option>
+                  </select>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="edit-approved"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    defaultChecked={selectedCompany.isApproved}
+                  />
+                  <label
+                    htmlFor="edit-approved"
+                    className="ml-2 block text-sm text-gray-900"
+                  >
+                    Approved
+                  </label>
+                </div>
+                <div className="flex justify-end space-x-3 pt-4">
+                  <button
+                    type="button"
+                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    onClick={() => setShowEditCompanyModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteConfirmation && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+              <div className="mb-4">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Confirm Deletion
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  Are you sure you want to delete this company? This action
+                  cannot be undone.
+                </p>
+              </div>
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  onClick={() => setShowDeleteConfirmation(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  onClick={handleDeleteCompany}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

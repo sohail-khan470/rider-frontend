@@ -43,4 +43,6 @@ export interface CompanyActions {
   getCompanyById: (id: number) => Promise<void>;
   logout: () => void;
   fetchCompanyCustomers: () => void;
+  editCompany: (id: number, updates: Partial<Company>) => Promise<void>;
+  deleteCompany: (id: number) => Promise<void>;
 }
