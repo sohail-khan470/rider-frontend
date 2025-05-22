@@ -56,6 +56,7 @@ export const bookingApi = {
         driverId,
       }
     );
+    console.log(response);
     return response.data;
   },
 
@@ -85,9 +86,15 @@ export const bookingApi = {
     return response.data;
   },
 
-  completeBooking: async (bookingId: number): Promise<Booking> => {
+  completeBooking: async (
+    bookingId: number,
+    status: BookingStatus
+  ): Promise<Booking> => {
     const response = await apiClient.patch(
-      `/api/bookings/${bookingId}/complete`
+      `/api/bookings/${bookingId}/complete`,
+      {
+        status,
+      }
     );
     return response.data;
   },

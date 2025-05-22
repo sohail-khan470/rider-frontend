@@ -32,7 +32,7 @@ type BookingActions = {
     status: BookingStatus
   ) => Promise<void>;
   acceptBooking: (bookingId: number, status: BookingStatus) => Promise<void>;
-  completeBooking: (bookingId: number) => Promise<void>;
+  completeBooking: (bookingId: number, status: BookingStatus) => Promise<void>;
   clearError: () => void;
   setCurrentBooking: (booking: Booking | null) => void;
   startBooking: (bookingId: number, status: BookingStatus) => Promise<void>;
@@ -68,6 +68,7 @@ export const useBookingStore = create<BookingState & BookingActions>()(
       set({ loading: true, error: null });
       try {
         const bookings = await bookingApi.getCustomerBookings();
+
         set({ bookings, loading: false });
       } catch (error: unknown) {
         const errorMessage =
@@ -94,6 +95,7 @@ export const useBookingStore = create<BookingState & BookingActions>()(
         const response = (await bookingApi.getCompanyBookings(
           companyId
         )) as any;
+
         set({ bookings: response.result, loading: false });
       } catch (error: unknown) {
         const errorMessage =
@@ -129,13 +131,14 @@ export const useBookingStore = create<BookingState & BookingActions>()(
     cancelBooking: async (bookingId: number) => {
       set({ loading: true, error: null });
       try {
-        const booking = await bookingApi.cancelBooking(bookingId);
+        const booking = (await bookingApi.cancelBooking(bookingId)) as any;
+        const updatedBooking = booking.result.updatedBooking;
         set((state) => {
           const index = state.bookings.findIndex(
             (b: Booking) => b.id === bookingId
           );
           if (index !== -1) {
-            state.bookings[index] = booking;
+            state.bookings[index] = updatedBooking;
           }
           state.loading = false;
         });
@@ -155,6 +158,7 @@ export const useBookingStore = create<BookingState & BookingActions>()(
       set({ loading: true, error: null });
       try {
         const booking = await bookingApi.assignDriver(bookingId, driverId);
+
         set((state) => {
           const index = state.bookings.findIndex(
             (b: Booking) => b.id === bookingId
@@ -165,7 +169,6 @@ export const useBookingStore = create<BookingState & BookingActions>()(
           state.loading = false;
         });
       } catch (error: any) {
-        console.log(error.response.data);
         const message = error.response.data.message;
         const errorMessage =
           error instanceof Error ? error.message : "Failed to assign driver";
@@ -192,7 +195,6 @@ export const useBookingStore = create<BookingState & BookingActions>()(
           state.loading = false;
         });
       } catch (error: unknown) {
-        console.log(error);
         const errorMessage =
           error instanceof Error
             ? error.message
@@ -206,42 +208,48 @@ export const useBookingStore = create<BookingState & BookingActions>()(
     },
 
     acceptBooking: async (bookingId: number, status: BookingStatus) => {
-      set({ loading: true, error: null });
       try {
         const response = (await bookingApi.acceptBooking(
           bookingId,
           status
         )) as any;
+
         set((state) => {
-          const index = state.bookings.findIndex(
-            (b: Booking) => b.id === bookingId
-          );
+          const index = state.bookings.findIndex((b) => b.id === bookingId);
           if (index !== -1) {
-            state.bookings[index] = response.booking;
+            state.bookings[index] = response.booking; // Final update
           }
           state.loading = false;
         });
-      } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to accept booking";
-        set({
-          error: errorMessage,
-          loading: false,
+      } catch (error) {
+        // Revert on error
+        set((state) => {
+          const index = state.bookings.findIndex((b) => b.id === bookingId);
+          if (index !== -1) {
+            state.bookings[index].status = "pending"; // Revert status
+          }
+          state.loading = false;
+          state.error =
+            error instanceof Error ? error.message : "Failed to accept booking";
         });
-        toast.error(errorMessage);
+        toast.error("Failed to accept booking");
       }
     },
 
-    completeBooking: async (bookingId: number) => {
+    completeBooking: async (bookingId: number, status: BookingStatus) => {
       set({ loading: true, error: null });
       try {
-        const booking = await bookingApi.completeBooking(bookingId);
+        const booking = (await bookingApi.completeBooking(
+          bookingId,
+          status
+        )) as any;
+        console.log(booking, "CCCCCCCCCC");
         set((state) => {
           const index = state.bookings.findIndex(
             (b: Booking) => b.id === bookingId
           );
           if (index !== -1) {
-            state.bookings[index] = booking;
+            state.bookings[index] = booking.data;
           }
           state.loading = false;
         });
@@ -263,7 +271,6 @@ export const useBookingStore = create<BookingState & BookingActions>()(
           bookingId,
           status
         )) as any;
-        console.log(response.booking);
         set((state) => {
           const index = state.bookings.findIndex(
             (b: Booking) => b.id === bookingId
