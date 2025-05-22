@@ -1,6 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useCompanyStore } from "../../stores";
 
 export default function CompanyProfileForm() {
+  const { currentCompany, getCompanyProfile } = useCompanyStore();
+
+  console.log(currentCompany);
+
+  useEffect(() => {
+    getCompanyProfile();
+  }, []);
+
   const [company, setCompany] = useState({
     name: "Bluell Inc.",
     email: "info@bluell.com",

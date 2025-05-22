@@ -15,6 +15,8 @@ const BookingManagement: React.FC = () => {
     assignDriver,
     updateBookingStatus,
     clearError,
+    startBooking,
+    acceptBooking,
   } = useBookingStore();
   const { fetchDrivers, drivers = [] } = useDriverStore();
 
@@ -61,14 +63,6 @@ const BookingManagement: React.FC = () => {
 
     return matchesStatus && matchesSearch;
   });
-
-  // Handler for driver assignment
-  // const handleAssignDriver = async (bookingId: number) => {
-  //   if (selectedDriverId && bookingId) {
-  //     await assignDriver(bookingId, selectedDriverId);
-  //     setSelectedDriverId(null);
-  //   }
-  // };
   const handleAssignDriver = async (bookingId: number) => {
     const driverId = selectedDrivers[bookingId];
     if (driverId && bookingId) {
@@ -86,7 +80,7 @@ const BookingManagement: React.FC = () => {
   ) => {
     if (bookingId) {
       await updateBookingStatus(bookingId, status);
-      fetchCompanyBookings();
+      // fetchCompanyBookings();
     }
   };
 
@@ -145,7 +139,6 @@ const BookingManagement: React.FC = () => {
           Create Booking
         </button>
       </div>
-
       {/* Error alert */}
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 relative">
@@ -158,7 +151,6 @@ const BookingManagement: React.FC = () => {
           </button>
         </div>
       )}
-
       {/* Filter & Search */}
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -194,9 +186,8 @@ const BookingManagement: React.FC = () => {
           </div>
         </div>
       </div>
-
       {/* Booking Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow-sm p-4">
           <div className="font-bold text-3xl text-blue-600">
             {totalBookings}
@@ -212,10 +203,10 @@ const BookingManagement: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-4">
-          <div className="font-bold text-3xl text-green-600">
-            {completedBookings}
+          <div className="font-bold text-3xl text-blue-500">
+            {bookings?.filter((b) => b?.status === "accepted")?.length || 0}
           </div>
-          <div className="text-gray-600">Completed</div>
+          <div className="text-gray-600">Accepted</div>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-4">
@@ -224,8 +215,21 @@ const BookingManagement: React.FC = () => {
           </div>
           <div className="text-gray-600">Ongoing</div>
         </div>
-      </div>
 
+        <div className="bg-white rounded-lg shadow-sm p-4">
+          <div className="font-bold text-3xl text-green-600">
+            {completedBookings}
+          </div>
+          <div className="text-gray-600">Completed</div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-4">
+          <div className="font-bold text-3xl text-red-600">
+            {bookings?.filter((b) => b?.status === "cancelled")?.length || 0}
+          </div>
+          <div className="text-gray-600">Cancelled</div>
+        </div>
+      </div>
       {/* Bookings Table */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
@@ -322,43 +326,6 @@ const BookingManagement: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {booking?.dropoff || "N/A"}
                       </td>
-
-                      {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {booking?.driverId ? (
-                          booking?.driver?.name || `Driver ${booking.driverId}`
-                        ) : (
-                          <div className="flex items-center">
-                            <select
-                              className="rounded mr-2 text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                              value={selectedDriverId || ""}
-                              onChange={(e) =>
-                                setSelectedDriverId(Number(e.target.value))
-                              }
-                              disabled={booking?.status !== "pending"}
-                            >
-                              <option value="">Select Driver</option>
-                              {drivers.map((driver) => (
-                                <option key={driver?.id} value={driver?.id}>
-                                  {driver?.name || "Unknown Driver"}
-                                </option>
-                              ))}
-                            </select>
-                            <button
-                              onClick={() =>
-                                booking?.id && handleAssignDriver(booking.id)
-                              }
-                              disabled={
-                                !selectedDriverId ||
-                                booking?.status !== "pending"
-                              }
-                              className="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded disabled:opacity-50"
-                            >
-                              Assign
-                            </button>
-                          </div>
-                        )}
-                      </td> */}
-
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {booking?.driverId ? (
                           booking?.driver?.name || `Driver ${booking.driverId}`
@@ -421,7 +388,7 @@ const BookingManagement: React.FC = () => {
                               <button
                                 onClick={() =>
                                   booking?.id &&
-                                  handleStatusUpdate(booking.id, "accepted")
+                                  acceptBooking(booking.id, "accepted")
                                 }
                                 className="text-indigo-600 hover:text-indigo-900 text-xs bg-indigo-50 px-2 py-1 rounded"
                               >
@@ -442,7 +409,7 @@ const BookingManagement: React.FC = () => {
                             <button
                               onClick={() =>
                                 booking?.id &&
-                                handleStatusUpdate(booking.id, "ongoing")
+                                startBooking(booking.id, "ongoing")
                               }
                               className="text-purple-600 hover:text-purple-900 text-xs bg-purple-50 px-2 py-1 rounded"
                             >
@@ -480,7 +447,6 @@ const BookingManagement: React.FC = () => {
           </div>
         )}
       </div>
-
       {/* Modals */}
       <CreateBookingModal
         isOpen={isCreateModalOpen}

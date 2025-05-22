@@ -31,10 +31,11 @@ type BookingActions = {
     bookingId: number,
     status: BookingStatus
   ) => Promise<void>;
-  acceptBooking: (bookingId: number) => Promise<void>;
+  acceptBooking: (bookingId: number, status: BookingStatus) => Promise<void>;
   completeBooking: (bookingId: number) => Promise<void>;
   clearError: () => void;
   setCurrentBooking: (booking: Booking | null) => void;
+  startBooking: (bookingId: number, status: BookingStatus) => Promise<void>;
 };
 
 export const useBookingStore = create<BookingState & BookingActions>()(
@@ -204,16 +205,19 @@ export const useBookingStore = create<BookingState & BookingActions>()(
       }
     },
 
-    acceptBooking: async (bookingId: number) => {
+    acceptBooking: async (bookingId: number, status: BookingStatus) => {
       set({ loading: true, error: null });
       try {
-        const booking = await bookingApi.acceptBooking(bookingId);
+        const response = (await bookingApi.acceptBooking(
+          bookingId,
+          status
+        )) as any;
         set((state) => {
           const index = state.bookings.findIndex(
             (b: Booking) => b.id === bookingId
           );
           if (index !== -1) {
-            state.bookings[index] = booking;
+            state.bookings[index] = response.booking;
           }
           state.loading = false;
         });
@@ -247,6 +251,35 @@ export const useBookingStore = create<BookingState & BookingActions>()(
         set({
           error: errorMessage,
           loading: false,
+        });
+        toast.error(errorMessage);
+      }
+    },
+
+    startBooking: async (bookingId: number, status: BookingStatus) => {
+      set({ loading: true, error: null }); // <-- Set loading true initially
+      try {
+        const response = (await bookingApi.startBooking(
+          bookingId,
+          status
+        )) as any;
+        console.log(response.booking);
+        set((state) => {
+          const index = state.bookings.findIndex(
+            (b: Booking) => b.id === bookingId
+          );
+          if (index !== -1) {
+            state.bookings[index] = response.booking;
+          }
+          state.loading = false; // <-- Set loading false after update
+        });
+        toast.success("Booking started successfully");
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to start booking";
+        set({
+          error: errorMessage,
+          loading: false, // <-- Ensure loading is reset on error
         });
         toast.error(errorMessage);
       }

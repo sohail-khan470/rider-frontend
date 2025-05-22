@@ -43,7 +43,7 @@ export const companyApi = {
   },
 
   getProfile: async (): Promise<Company> => {
-    const response = await apiClient.get("/companies/me");
+    const response = await apiClient.get("/api/company/me");
     return response.data;
   },
 

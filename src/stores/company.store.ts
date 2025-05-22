@@ -61,7 +61,12 @@ export const useCompanyStore = create<CompanyState & CompanyActions>()(
     getCompanyProfile: async () => {
       set({ loading: true, error: null });
       try {
-        const company = await companyApi.getProfile();
+        // const token = localStorage.getItem("authToken") || " ";
+        // const decoded = jwtDecode(token) as any;
+        // const companyId = decoded.companyId;
+
+        const response = (await companyApi.getProfile()) as any;
+        console.log(response.company);
         set({ currentCompany: company, loading: false });
       } catch (error) {
         set({ error: "Failed to fetch company profile", loading: false });

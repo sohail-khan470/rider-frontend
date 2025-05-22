@@ -12,6 +12,7 @@ import {
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
+import { SettingsIcon } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -65,9 +66,9 @@ const companyAdminItems: NavItem[] = [
     path: "/company/staff",
   },
   {
-    name: "Company Management",
-    icon: <LockIcon />,
-    path: "/company/management",
+    name: "Company Settings",
+    icon: <SettingsIcon />,
+    path: "/company/settings",
   },
 ];
 

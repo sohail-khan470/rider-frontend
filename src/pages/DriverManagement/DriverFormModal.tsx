@@ -3,6 +3,7 @@ import { Driver, DriverStatus } from "./types/driver.types";
 import { useDriverStore } from "../../stores";
 import { jwtDecode } from "jwt-decode";
 import { useCityStore } from "../../stores/city.store";
+import moment from "moment-timezone";
 
 interface DriverFormModalProps {
   driver: Driver | null;
@@ -30,27 +31,16 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
     vehicleInfo: driver?.vehicleInfo || "",
     cityId: driver?.cityId || 0,
     status: driver?.status || ("offline" as DriverStatus),
-    timezone: driver?.timezone || "",
+    timezone: driver?.timezone || moment.tz.guess(), // Default to user's timezone
   });
 
+  // Get all timezones from moment-timezone
+  const timezones = moment.tz.names();
+
   useEffect(() => {
-    // Fetch cities from the city store
     fetchDrivers();
     fetchCities();
   }, []);
-
-  // const handleChange = (
-  //   e: React.ChangeEvent<
-  //     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-  //   >
-  // ) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: name === "cityId" ? Number(value) : value,
-  //   });
-  //   fetchDrivers();
-  // };
 
   const handleChange = async (
     e: React.ChangeEvent<
@@ -250,15 +240,19 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
             >
               Timezone
             </label>
-            <input
+            <select
               id="timezone"
               name="timezone"
-              type="text"
               value={formData.timezone}
               onChange={handleChange}
-              placeholder="e.g. UTC+0"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
+            >
+              {timezones.map((tz) => (
+                <option key={tz} value={tz}>
+                  {tz}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="flex items-center justify-end">

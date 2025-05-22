@@ -13,6 +13,17 @@ export const bookingApi = {
     return response.data;
   },
 
+  async startBooking(
+    bookingId: number,
+    status: BookingStatus
+  ): Promise<Booking> {
+    console.log(bookingId, status);
+    const response = await apiClient.patch(`/api/bookings/${bookingId}/start`, {
+      status,
+    });
+    return response.data;
+  },
+
   getCustomerBookings: async (): Promise<Booking[]> => {
     const response = await apiClient.get("/api/bookings/customer");
     return response.data;
@@ -61,8 +72,16 @@ export const bookingApi = {
     return response.data;
   },
 
-  acceptBooking: async (bookingId: number): Promise<Booking> => {
-    const response = await apiClient.patch(`/api/bookings/${bookingId}/accept`);
+  acceptBooking: async (
+    bookingId: number,
+    status: BookingStatus
+  ): Promise<Booking> => {
+    const response = await apiClient.patch(
+      `/api/bookings/${bookingId}/accept`,
+      {
+        status,
+      }
+    );
     return response.data;
   },
 
