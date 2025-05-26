@@ -19,6 +19,7 @@ import { useCompanyStore } from "../../stores";
 import { Company } from "../../stores/types/company.types";
 export default function CompanyManagementDashboard() {
   // Use company store
+
   const {
     companies,
     loading,

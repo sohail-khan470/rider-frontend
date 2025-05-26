@@ -1,5 +1,11 @@
 // src/api/types/company.types.ts
 export interface Company {
+  media: any;
+  _count: any;
+  profile: any;
+  contact: any;
+  addresses: boolean;
+  updatedAt(updatedAt: any): import("react").ReactNode;
   id: number;
   name: string;
   email: string;
