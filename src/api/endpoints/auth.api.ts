@@ -13,8 +13,8 @@ export const authApi = {
       email,
       password,
     });
-    console.log(response);
-    return response.data;
+
+    return response.data.data;
   },
 
   superAdminProfile: async (): Promise<SuperAdmin> => {
