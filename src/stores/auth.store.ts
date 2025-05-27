@@ -18,6 +18,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       set({ loading: true, error: null });
       try {
         const response = await authApi.login(email, password);
+        console.log(response);
+
         const type = response.data.user.type;
         const token = response.data.token;
         const data = jwtDecode(token) as any;

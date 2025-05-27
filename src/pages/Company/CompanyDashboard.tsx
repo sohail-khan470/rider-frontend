@@ -91,11 +91,14 @@ const CompanyDashboard: React.FC = () => {
     error: storeError,
     getCompanyProfile,
     updateCompanyProfile,
+    editCompany,
   } = useCompanyStore();
 
   const [currentView, setCurrentView] = useState<"view" | "edit">("view");
   const [isLoading, setIsLoading] = useState(false);
   const [editData, setEditData] = useState<Company | null>(null);
+
+  console.log(editData);
 
   useEffect(() => {
     const loadCompanyData = async () => {
@@ -132,7 +135,7 @@ const CompanyDashboard: React.FC = () => {
 
     setIsLoading(true);
     try {
-      await updateCompanyProfile(editData);
+      await editCompany(currentCompany?.id, editData);
       setCurrentView("view");
       toast.success("Company information updated successfully");
     } catch (error) {

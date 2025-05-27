@@ -13,6 +13,7 @@ export const authApi = {
       email,
       password,
     });
+    console.log(response);
     return response.data;
   },
 

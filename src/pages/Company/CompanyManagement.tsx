@@ -30,6 +30,7 @@ export default function CompanyManagementDashboard() {
     editCompany,
     getCompanyByAdminId,
     deleteCompany,
+    currentCompany,
   } = useCompanyStore();
 
   // Local state
@@ -68,8 +69,6 @@ export default function CompanyManagementDashboard() {
       toast.error(`Failed to approve company: ${error.message}`);
     }
   };
-
-  console.log(companyToDelete);
 
   const handleDeleteCompany = async () => {
     if (!companyToDelete) return;
@@ -137,6 +136,7 @@ export default function CompanyManagementDashboard() {
 
   // You'll need to implement the actual submit handler for the edit form
   const handleEditCompany = async (e: React.FormEvent) => {
+    console.log(selectedCompany);
     e.preventDefault();
     if (!selectedCompany) return;
 

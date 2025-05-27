@@ -47,8 +47,11 @@ export const companyApi = {
     return response.data;
   },
 
-  updateProfile: async (updates: Partial<Company>): Promise<Company> => {
-    const response = await apiClient.patch("/companies/me", updates);
+  updateProfile: async (
+    updates: Partial<Company>,
+    id: number
+  ): Promise<Company> => {
+    const response = await apiClient.patch(`/api/company/${id}`, updates);
     return response.data;
   },
 

@@ -58,7 +58,7 @@ export const RouterConfig = () => {
         </Route>
 
         {/* Company Admin Routes */}
-        <Route element={<RoleRoute type={["admin"]} />}>
+        <Route element={<RoleRoute type={["ADMIN"]} />}>
           <Route element={<AppLayout />}>
             <Route path="/company/home" element={<CompanyDashboard />} />
             <Route path="/company/profile" element={<UserProfiles />} />
@@ -69,7 +69,7 @@ export const RouterConfig = () => {
         </Route>
       </Route>
       <Route element={<ProtectedRoute />}>
-        <Route element={<RoleRoute type={["admin", "super_admin"]} />}>
+        <Route element={<RoleRoute type={["ADMIN", "super_admin"]} />}>
           <Route element={<AppLayout />}>
             <Route path="/company/drivers" element={<DriverManagement />} />
           </Route>

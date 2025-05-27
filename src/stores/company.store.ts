@@ -66,7 +66,6 @@ export const useCompanyStore = create<CompanyState & CompanyActions>()(
         // const companyId = decoded.companyId;
 
         const response = (await companyApi.getProfile()) as any;
-        console.log(response.company);
         set({ currentCompany: response.company, loading: false });
       } catch (error) {
         set({ error: "Failed to fetch company profile", loading: false });

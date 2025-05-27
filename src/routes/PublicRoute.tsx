@@ -4,11 +4,12 @@ const PublicRoute = ({ children }: { children: JSX.Element }) => {
   const authToken = localStorage.getItem("authToken");
   const userRole = localStorage.getItem("role");
 
+  console.log(userRole?.toLowerCase());
   if (authToken && userRole === "super_admin") {
     return <Navigate to="/" replace />;
   }
 
-  if (authToken && userRole === "admin") {
+  if (authToken && userRole === "ADMIN") {
     return <Navigate to="/company/home" replace />;
   }
 
