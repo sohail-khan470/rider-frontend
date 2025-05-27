@@ -161,7 +161,7 @@ export const useCompanyStore = create<CompanyState & CompanyActions>()(
       set({ loading: true, error: null });
       try {
         const response = await companyApi.editCompany(id, updates);
-        console.log(response);
+        console.log(response.data);
         set({ currentCompany: response.data, loading: false });
       } catch (error) {
         set({ error: "Error updating company", loading: false });

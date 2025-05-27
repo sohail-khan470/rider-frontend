@@ -8,7 +8,7 @@ import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 const BookingManagement: React.FC = () => {
   const {
-    bookings = [],
+    bookings,
     loading,
     error,
     fetchCompanyBookings,
@@ -20,7 +20,7 @@ const BookingManagement: React.FC = () => {
     acceptBooking,
     completeBooking,
   } = useBookingStore();
-  const { fetchDrivers, drivers = [] } = useDriverStore();
+  const { fetchDrivers, drivers } = useDriverStore();
 
   const [selectedDrivers, setSelectedDrivers] = useState<{
     [key: number]: number | null;
@@ -30,10 +30,13 @@ const BookingManagement: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-  console.log(bookings[0]);
 
   useEffect(() => {
     fetchCompanyBookings();
+  }, []);
+
+  useEffect(() => {
+    fetchDrivers();
   }, []);
 
   useEffect(() => {

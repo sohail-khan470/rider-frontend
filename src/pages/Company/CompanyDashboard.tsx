@@ -26,8 +26,8 @@ interface CompanyAddress {
   country: string;
   postalCode: string;
   isPrimary: boolean;
-  createdAt: string; // Changed from Date to string
-  updatedAt: string; // Changed from Date to string
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface CompanyContact {
@@ -36,8 +36,8 @@ interface CompanyContact {
   phone: string;
   email: string;
   website: string;
-  createdAt: string; // Changed from Date to string
-  updatedAt: string; // Changed from Date to string
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface CompanyProfile {
@@ -47,8 +47,8 @@ interface CompanyProfile {
   mission: string | null;
   vision: string | null;
   values: string | null;
-  createdAt: string; // Changed from Date to string
-  updatedAt: string; // Changed from Date to string
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface CompanyMedia {
@@ -56,31 +56,67 @@ interface CompanyMedia {
   companyId: number;
   type: MediaType;
   url: string;
-  createdAt: string; // Changed from Date to string
-  updatedAt: string; // Changed from Date to string
+  createdAt: string;
+  updatedAt: string;
 }
 
 type MediaType = "LOGO" | "BANNER" | "DOCUMENT" | "OTHER";
 
-// Fixed Company interface to match Prisma schema
 interface Company {
   id: number;
   name: string;
   isApproved: boolean;
   timezone: string;
-  createdAt: string; // Changed from Date to string
-  updatedAt: string; // Changed from Date to string
-  // Relations (all optional since they might not be included in queries)
+  createdAt: string;
+  updatedAt: string;
   contact?: CompanyContact | null;
   addresses?: CompanyAddress[];
   media?: CompanyMedia[];
   profile?: CompanyProfile | null;
-  // Count aggregations
   _count?: {
     drivers: number;
     customers: number;
     users: number;
     bookings: number;
+  };
+}
+
+// Define the structure for selective updates
+interface CompanyUpdateData {
+  // Basic company info
+  name: string;
+  timezone: string;
+
+  // Contact information (will be upserted)
+  contact: {
+    phone: string;
+    email: string;
+    website: string;
+  };
+
+  // Profile information (will be upserted)
+  profile: {
+    description: string;
+    mission: string | null;
+    vision: string | null;
+    values: string | null;
+  };
+}
+
+// Form state interface for editing
+interface EditFormData {
+  name: string;
+  timezone: string;
+  contact: {
+    phone: string;
+    email: string;
+    website: string;
+  };
+  profile: {
+    description: string;
+    mission: string;
+    vision: string;
+    values: string;
   };
 }
 
@@ -96,9 +132,21 @@ const CompanyDashboard: React.FC = () => {
 
   const [currentView, setCurrentView] = useState<"view" | "edit">("view");
   const [isLoading, setIsLoading] = useState(false);
-  const [editData, setEditData] = useState<Company | null>(null);
-
-  console.log(editData);
+  const [editData, setEditData] = useState<EditFormData>({
+    name: "",
+    timezone: "UTC",
+    contact: {
+      phone: "",
+      email: "",
+      website: "",
+    },
+    profile: {
+      description: "",
+      mission: "",
+      vision: "",
+      values: "",
+    },
+  });
 
   useEffect(() => {
     const loadCompanyData = async () => {
@@ -112,9 +160,24 @@ const CompanyDashboard: React.FC = () => {
     loadCompanyData();
   }, [getCompanyProfile]);
 
+  // Initialize edit data when company data is loaded
   useEffect(() => {
     if (currentCompany) {
-      setEditData(currentCompany);
+      setEditData({
+        name: currentCompany.name || "",
+        timezone: currentCompany.timezone || "UTC",
+        contact: {
+          phone: currentCompany.contact?.phone || "",
+          email: currentCompany.contact?.email || "",
+          website: currentCompany.contact?.website || "",
+        },
+        profile: {
+          description: currentCompany.profile?.description || "",
+          mission: currentCompany.profile?.mission || "",
+          vision: currentCompany.profile?.vision || "",
+          values: currentCompany.profile?.values || "",
+        },
+      });
     }
   }, [currentCompany]);
 
@@ -131,15 +194,49 @@ const CompanyDashboard: React.FC = () => {
   };
 
   const handleSave = async () => {
-    if (!editData) return;
+    if (!currentCompany) return;
 
     setIsLoading(true);
     try {
-      await editCompany(currentCompany?.id, editData);
+      // Prepare selective update data - only the fields that can be edited
+      const updateData: CompanyUpdateData = {
+        name: editData.name.trim(),
+        timezone: editData.timezone,
+        contact: {
+          phone: editData.contact.phone.trim(),
+          email: editData.contact.email.trim(),
+          website: editData.contact.website.trim(),
+        },
+        profile: {
+          description: editData.profile.description.trim(),
+          mission: editData.profile.mission.trim() || null,
+          vision: editData.profile.vision.trim() || null,
+          values: editData.profile.values.trim() || null,
+        },
+      };
+
+      console.log(updateData);
+
+      if (updateData.contact.email && !isValidEmail(updateData.contact.email)) {
+        toast.error("Please enter a valid email address");
+        return;
+      }
+
+      if (
+        updateData.contact.website &&
+        !isValidUrl(updateData.contact.website)
+      ) {
+        toast.error("Please enter a valid website URL");
+        return;
+      }
+
+      // Call the store method with selective data
+      await editCompany(currentCompany.id, updateData);
       setCurrentView("view");
       toast.success("Company information updated successfully");
     } catch (error) {
       toast.error("Failed to update company information");
+      console.error("Update error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -147,27 +244,54 @@ const CompanyDashboard: React.FC = () => {
 
   const handleCancel = () => {
     if (currentCompany) {
-      setEditData(currentCompany);
+      // Reset form data to original values
+      setEditData({
+        name: currentCompany.name || "",
+        timezone: currentCompany.timezone || "UTC",
+        contact: {
+          phone: currentCompany.contact?.phone || "",
+          email: currentCompany.contact?.email || "",
+          website: currentCompany.contact?.website || "",
+        },
+        profile: {
+          description: currentCompany.profile?.description || "",
+          mission: currentCompany.profile?.mission || "",
+          vision: currentCompany.profile?.vision || "",
+          values: currentCompany.profile?.values || "",
+        },
+      });
     }
     setCurrentView("view");
   };
 
-  const updateEditData = (path: string, value: any) => {
+  const updateEditData = (field: string, value: string) => {
     setEditData((prev) => {
-      if (!prev) return prev;
-
       const newData = { ...prev };
-      const keys = path.split(".");
+      const keys = field.split(".");
       let current: any = newData;
 
       for (let i = 0; i < keys.length - 1; i++) {
-        if (!current[keys[i]]) current[keys[i]] = {};
         current = current[keys[i]];
       }
 
       current[keys[keys.length - 1]] = value;
       return newData;
     });
+  };
+
+  // Validation helpers
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const isValidUrl = (url: string): boolean => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   // Show loading state
@@ -503,8 +627,6 @@ const CompanyDashboard: React.FC = () => {
   }
 
   // Edit View
-  if (!editData) return null;
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
@@ -550,6 +672,7 @@ const CompanyDashboard: React.FC = () => {
                 value={editData.name}
                 onChange={(e) => updateEditData("name", e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter company name"
               />
             </div>
             <div>
@@ -583,11 +706,12 @@ const CompanyDashboard: React.FC = () => {
               </label>
               <input
                 type="text"
-                value={editData.contact?.phone || ""}
+                value={editData.contact.phone}
                 onChange={(e) =>
                   updateEditData("contact.phone", e.target.value)
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter phone number"
               />
             </div>
             <div>
@@ -596,11 +720,12 @@ const CompanyDashboard: React.FC = () => {
               </label>
               <input
                 type="email"
-                value={editData.contact?.email || ""}
+                value={editData.contact.email}
                 onChange={(e) =>
                   updateEditData("contact.email", e.target.value)
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter email address"
               />
             </div>
             <div className="md:col-span-2">
@@ -609,7 +734,7 @@ const CompanyDashboard: React.FC = () => {
               </label>
               <input
                 type="url"
-                value={editData.contact?.website || ""}
+                value={editData.contact.website}
                 onChange={(e) =>
                   updateEditData("contact.website", e.target.value)
                 }
@@ -632,7 +757,7 @@ const CompanyDashboard: React.FC = () => {
               </label>
               <textarea
                 rows={3}
-                value={editData.profile?.description || ""}
+                value={editData.profile.description}
                 onChange={(e) =>
                   updateEditData("profile.description", e.target.value)
                 }
@@ -646,7 +771,7 @@ const CompanyDashboard: React.FC = () => {
               </label>
               <textarea
                 rows={2}
-                value={editData.profile?.mission || ""}
+                value={editData.profile.mission}
                 onChange={(e) =>
                   updateEditData("profile.mission", e.target.value)
                 }
@@ -660,7 +785,7 @@ const CompanyDashboard: React.FC = () => {
               </label>
               <textarea
                 rows={2}
-                value={editData.profile?.vision || ""}
+                value={editData.profile.vision}
                 onChange={(e) =>
                   updateEditData("profile.vision", e.target.value)
                 }
@@ -674,7 +799,7 @@ const CompanyDashboard: React.FC = () => {
               </label>
               <textarea
                 rows={2}
-                value={editData.profile?.values || ""}
+                value={editData.profile.values}
                 onChange={(e) =>
                   updateEditData("profile.values", e.target.value)
                 }

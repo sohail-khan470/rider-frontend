@@ -157,21 +157,23 @@ export const useBookingStore = create<BookingState & BookingActions>()(
       console.log("@ASSIGN DRIVER");
       set({ loading: true, error: null });
       try {
-        const booking = await bookingApi.assignDriver(bookingId, driverId);
-
+        const booking = (await bookingApi.assignDriver(
+          bookingId,
+          driverId
+        )) as any;
+        console.log(booking);
         set((state) => {
           const index = state.bookings.findIndex(
             (b: Booking) => b.id === bookingId
           );
           if (index !== -1) {
-            state.bookings[index] = booking;
+            state.bookings[index] = booking.data;
           }
           state.loading = false;
         });
-      } catch (error: any) {
-        const message = error.response.data.message;
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to assign driver";
+      } catch (e: any) {
+        console.log(e);
+        const message = e.response.data.error.message;
         set({
           error: message,
           loading: false,
