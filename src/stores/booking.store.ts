@@ -90,6 +90,7 @@ export const useBookingStore = create<BookingState & BookingActions>()(
       const token = localStorage.getItem("authToken") || "";
       const decoded = jwtDecode(token) as any;
       const companyId = decoded.companyId;
+      console.log(companyId);
 
       try {
         const response = (await bookingApi.getCompanyBookings(
@@ -173,7 +174,8 @@ export const useBookingStore = create<BookingState & BookingActions>()(
         });
       } catch (e: any) {
         console.log(e);
-        const message = e.response.data.error.message;
+        const message = e.response.data.message;
+        //const message = e.response.data.error.message;
         set({
           error: message,
           loading: false,

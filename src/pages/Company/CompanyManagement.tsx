@@ -51,8 +51,6 @@ export default function CompanyManagementDashboard() {
     isApproved: false,
   });
 
-  console.log(selectedCompany);
-
   // Fetch companies on component mount
   useEffect(() => {
     fetchAllCompanies();

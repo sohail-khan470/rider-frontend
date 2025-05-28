@@ -15,8 +15,8 @@ export function AddStaffModal() {
         name: data.name,
         email: data.email,
         roleId: data.roleId,
-        companyId: data.companyId, // ensure this exists in StaffFormValues
-        password: data.password, // ensure this exists in StaffFormValues
+        companyId: data.companyId,
+        password: data.password,
       });
       setIsOpen(false);
     } finally {
@@ -28,15 +28,15 @@ export function AddStaffModal() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-800"
       >
         Add New Staff
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 dark:bg-gray-900 dark:bg-opacity-50">
+          <div className="rounded-2xl border border-gray-200 bg-white shadow-xl max-w-md w-full p-6 dark:border-gray-800 dark:bg-white/[0.03]">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4 dark:text-white/90">
               Add New Staff Member
             </h2>
             <StaffForm

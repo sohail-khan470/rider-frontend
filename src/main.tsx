@@ -9,10 +9,10 @@ import { ThemeProvider } from "./context/ThemeContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider>
+    <ThemeProvider value-provider="dark">
       <AppWrapper>
         <App />
       </AppWrapper>
     </ThemeProvider>
-  </StrictMode>,
+  </StrictMode>
 );

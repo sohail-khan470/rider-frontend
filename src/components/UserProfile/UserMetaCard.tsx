@@ -4,18 +4,22 @@ import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { useAuthStore } from "../../stores";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 export default function UserMetaCard() {
   const { isOpen, openModal, closeModal } = useModal();
-  const { user } = useAuthStore();
+  const { user, loading } = useAuthStore();
   console.log(user);
 
   const handleSave = () => {
-    // Handle save logic here
-
     console.log("Saving changes...");
     closeModal();
   };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <>
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">

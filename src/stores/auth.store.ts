@@ -45,6 +45,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
       if (token) {
         const decoded: any = jwtDecode(token);
+        console.log(decoded);
         set({
           token,
           user: decoded,
@@ -59,6 +60,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       set({ loading: true, error: null });
       try {
         const response = (await authApi.getUserProfile()) as any;
+        console.log(response);
         set({
           user: {
             ...response.data.profile.user, // Merge with profile data

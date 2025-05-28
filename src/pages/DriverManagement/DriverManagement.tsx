@@ -1,4 +1,3 @@
-// src/pages/DriverManagement.tsx
 import React, { useEffect, useState } from "react";
 import { Driver, DriverStatus } from "./types/driver.types";
 import { format } from "date-fns";
@@ -6,6 +5,7 @@ import LoadingSpinner from "../../components/common/LoadingSpinner";
 import { useDriverStore } from "../../stores";
 import DriverFormModal from "./DriverFormModal";
 import AvailabilityModal from "./AvaliblityModal";
+
 const DriverManagement: React.FC = () => {
   const {
     drivers,
@@ -26,8 +26,6 @@ const DriverManagement: React.FC = () => {
   useEffect(() => {
     fetchDrivers();
   }, []);
-
-  console.log(currentDriver);
 
   const handleViewDriver = (id: number) => {
     fetchDriverById(id);
@@ -73,13 +71,13 @@ const DriverManagement: React.FC = () => {
   const getStatusBadgeClass = (status: DriverStatus) => {
     switch (status) {
       case "online":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
       case "offline":
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
       case "on_trip":
-        return "bg-blue-100 text-blue-800";
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
     }
   };
 
@@ -90,61 +88,66 @@ const DriverManagement: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Driver Management</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white/90">
+          Driver Management
+        </h1>
         <button
           onClick={handleCreateDriver}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md dark:bg-blue-700 dark:hover:bg-blue-800"
         >
           Add New Driver
         </button>
       </div>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 dark:bg-red-900 dark:border-red-700 dark:text-red-100">
           {error}
         </div>
       )}
 
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
+      <div className="rounded-2xl border border-gray-200 bg-white shadow-md dark:border-gray-800 dark:bg-white/[0.03]">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-800/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   Phone
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   City
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   Total Bookings
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200 dark:bg-white/[0.02] dark:divide-gray-700">
               {drivers.map((driver) => (
-                <tr key={driver.id} className="hover:bg-gray-50">
+                <tr
+                  key={driver.id}
+                  className="hover:bg-gray-50 dark:hover:bg-white/[0.05]"
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="font-medium text-gray-900">
+                    <div className="font-medium text-gray-900 dark:text-white/90">
                       {driver.name}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {driver.email}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {driver.phone}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -156,22 +159,22 @@ const DriverManagement: React.FC = () => {
                       {driver.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {driver.city?.name}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {driver._count?.bookings || 0}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 space-x-2">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 space-x-2">
                     <button
                       onClick={() => handleViewDriver(driver.id)}
-                      className="text-indigo-600 hover:text-indigo-900"
+                      className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
                     >
                       View
                     </button>
                     <button
                       onClick={() => handleManageAvailability(driver.id)}
-                      className="text-blue-600 hover:text-blue-900"
+                      className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
                     >
                       Availability
                     </button>
@@ -184,7 +187,7 @@ const DriverManagement: React.FC = () => {
                             e.target.value as DriverStatus
                           )
                         }
-                        className="mt-1 block w-full py-1 px-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                        className="mt-1 block w-full py-1 px-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                       >
                         <option value="online">Online</option>
                         <option value="offline">Offline</option>
@@ -193,7 +196,7 @@ const DriverManagement: React.FC = () => {
                     </div>
                     <button
                       onClick={() => handleDeleteDriver(driver.id)}
-                      className="text-red-600 hover:text-red-900"
+                      className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
                     >
                       Delete
                     </button>
@@ -208,12 +211,14 @@ const DriverManagement: React.FC = () => {
       {/* Driver Details Modal */}
       {isModalOpen && currentDriver && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg p-8 max-w-2xl w-full max-h-screen overflow-y-auto">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 max-w-2xl w-full max-h-screen overflow-y-auto dark:border-gray-800 dark:bg-white/[0.03]">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Driver Details</h2>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white/90">
+                Driver Details
+              </h2>
               <button
                 onClick={closeModal}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               >
                 ✕
               </button>
@@ -221,19 +226,31 @@ const DriverManagement: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-gray-500">Name</p>
-                <p className="font-medium">{currentDriver.name}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Name</p>
+                <p className="font-medium dark:text-white/90">
+                  {currentDriver.name}
+                </p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Email</p>
-                <p className="font-medium">{currentDriver.email}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Email
+                </p>
+                <p className="font-medium dark:text-white/90">
+                  {currentDriver.email}
+                </p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Phone</p>
-                <p className="font-medium">{currentDriver.phone}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Phone
+                </p>
+                <p className="font-medium dark:text-white/90">
+                  {currentDriver.phone}
+                </p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Status</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Status
+                </p>
                 <p className="font-medium">
                   <span
                     className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(
@@ -245,44 +262,70 @@ const DriverManagement: React.FC = () => {
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Vehicle Info</p>
-                <p className="font-medium">{currentDriver.vehicleInfo}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Vehicle Info
+                </p>
+                <p className="font-medium dark:text-white/90">
+                  {currentDriver.vehicleInfo}
+                </p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">City</p>
-                <p className="font-medium">{currentDriver.city?.name}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">City</p>
+                <p className="font-medium dark:text-white/90">
+                  {currentDriver.city?.name}
+                </p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Company</p>
-                <p className="font-medium">{currentDriver.company?.name}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Company
+                </p>
+                <p className="font-medium dark:text-white/90">
+                  {currentDriver.company?.name}
+                </p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Timezone</p>
-                <p className="font-medium">{currentDriver.timezone || "UTC"}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Timezone
+                </p>
+                <p className="font-medium dark:text-white/90">
+                  {currentDriver.timezone || "UTC"}
+                </p>
               </div>
               {currentDriver.location && (
                 <>
                   <div>
-                    <p className="text-sm text-gray-500">Latitude</p>
-                    <p className="font-medium">{currentDriver.location.lat}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Latitude
+                    </p>
+                    <p className="font-medium dark:text-white/90">
+                      {currentDriver.location.lat}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Longitude</p>
-                    <p className="font-medium">{currentDriver.location.lng}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Longitude
+                    </p>
+                    <p className="font-medium dark:text-white/90">
+                      {currentDriver.location.lng}
+                    </p>
                   </div>
                 </>
               )}
               <div>
-                <p className="text-sm text-gray-500">Created At</p>
-                <p className="font-medium">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Created At
+                </p>
+                <p className="font-medium dark:text-white/90">
                   {currentDriver.createdAt
                     ? format(new Date(currentDriver.createdAt), "PPpp")
                     : "N/A"}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Updated At</p>
-                <p className="font-medium">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Updated At
+                </p>
+                <p className="font-medium dark:text-white/90">
                   {currentDriver.updatedAt
                     ? format(new Date(currentDriver.updatedAt), "PPpp")
                     : "N/A"}
@@ -292,17 +335,19 @@ const DriverManagement: React.FC = () => {
 
             {currentDriver.bookings && currentDriver.bookings.length > 0 && (
               <div className="mt-6">
-                <h3 className="text-lg font-bold mb-2">Recent Bookings</h3>
-                <div className="bg-white shadow overflow-hidden rounded-md">
-                  <ul className="divide-y divide-gray-200">
+                <h3 className="text-lg font-bold mb-2 text-gray-800 dark:text-white/90">
+                  Recent Bookings
+                </h3>
+                <div className="rounded-2xl border border-gray-200 bg-white shadow overflow-hidden dark:border-gray-800 dark:bg-white/[0.03]">
+                  <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                     {currentDriver.bookings.slice(0, 5).map((booking: any) => (
                       <li key={booking.id} className="px-4 py-3">
                         <div className="flex justify-between">
                           <div>
-                            <p className="text-sm font-medium">
+                            <p className="text-sm font-medium dark:text-white/90">
                               {booking.pickup} → {booking.dropoff}
                             </p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
                               {format(new Date(booking.requestedAt), "PPpp")}
                             </p>
                           </div>
@@ -310,12 +355,12 @@ const DriverManagement: React.FC = () => {
                             <span
                               className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                 booking.status === "completed"
-                                  ? "bg-green-100 text-green-800"
+                                  ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                                   : booking.status === "cancelled"
-                                  ? "bg-red-100 text-red-800"
+                                  ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
                                   : booking.status === "ongoing"
-                                  ? "bg-blue-100 text-blue-800"
-                                  : "bg-yellow-100 text-yellow-800"
+                                  ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                                  : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
                               }`}
                             >
                               {booking.status}
@@ -332,7 +377,7 @@ const DriverManagement: React.FC = () => {
             <div className="mt-6 flex justify-end">
               <button
                 onClick={closeModal}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md"
+                className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white"
               >
                 Close
               </button>

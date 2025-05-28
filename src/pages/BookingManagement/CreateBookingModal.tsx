@@ -127,22 +127,16 @@ const CreateBookingModal: React.FC<CreateBookingModalProps> = ({
 
       await createBooking(bookingData);
       fetchCompanyBookings();
-      // Important: Call onClose before anything else to ensure modal closes
       onClose();
 
-      // Reset form state after closing modal
       setFormData({ pickup: "", dropoff: "", fare: "", customerId: "" });
       setIsSubmitting(false);
-
-      // Remove the page reload - this is what was causing the issue
-      // Let the parent component refresh data if needed
     } catch (error) {
       console.error("Error creating booking:", error);
       setIsSubmitting(false);
     }
   };
 
-  // Handle clicking outside modal to close it
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget && !isSubmitting) {
       onClose();
@@ -151,15 +145,15 @@ const CreateBookingModal: React.FC<CreateBookingModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50"
       onClick={handleBackdropClick}
     >
       <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-md"
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white">
             Create New Booking
           </h3>
         </div>
@@ -172,15 +166,17 @@ const CreateBookingModal: React.FC<CreateBookingModalProps> = ({
           <form onSubmit={handleSubmit}>
             <div className="px-6 py-4">
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Customer
                 </label>
                 <select
                   name="customerId"
                   value={formData.customerId}
                   onChange={handleChange}
-                  className={`w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 ${
-                    errors.customerId ? "border-red-500" : ""
+                  className={`w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-indigo-300 dark:focus:border-indigo-500 focus:ring focus:ring-indigo-200 dark:focus:ring-indigo-700 focus:ring-opacity-50 ${
+                    errors.customerId
+                      ? "border-red-500 dark:border-red-500"
+                      : ""
                   }`}
                   disabled={isSubmitting}
                 >
@@ -192,14 +188,14 @@ const CreateBookingModal: React.FC<CreateBookingModalProps> = ({
                   ))}
                 </select>
                 {errors.customerId && (
-                  <p className="text-red-500 text-xs mt-1">
+                  <p className="text-red-500 dark:text-red-400 text-xs mt-1">
                     {errors.customerId}
                   </p>
                 )}
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Pickup Location
                 </label>
                 <input
@@ -208,18 +204,20 @@ const CreateBookingModal: React.FC<CreateBookingModalProps> = ({
                   value={formData.pickup}
                   onChange={handleChange}
                   placeholder="Enter pickup address"
-                  className={`w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 ${
-                    errors.pickup ? "border-red-500" : ""
+                  className={`w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-indigo-300 dark:focus:border-indigo-500 focus:ring focus:ring-indigo-200 dark:focus:ring-indigo-700 focus:ring-opacity-50 ${
+                    errors.pickup ? "border-red-500 dark:border-red-500" : ""
                   }`}
                   disabled={isSubmitting}
                 />
                 {errors.pickup && (
-                  <p className="text-red-500 text-xs mt-1">{errors.pickup}</p>
+                  <p className="text-red-500 dark:text-red-400 text-xs mt-1">
+                    {errors.pickup}
+                  </p>
                 )}
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Dropoff Location
                 </label>
                 <input
@@ -228,18 +226,20 @@ const CreateBookingModal: React.FC<CreateBookingModalProps> = ({
                   value={formData.dropoff}
                   onChange={handleChange}
                   placeholder="Enter destination address"
-                  className={`w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 ${
-                    errors.dropoff ? "border-red-500" : ""
+                  className={`w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-indigo-300 dark:focus:border-indigo-500 focus:ring focus:ring-indigo-200 dark:focus:ring-indigo-700 focus:ring-opacity-50 ${
+                    errors.dropoff ? "border-red-500 dark:border-red-500" : ""
                   }`}
                   disabled={isSubmitting}
                 />
                 {errors.dropoff && (
-                  <p className="text-red-500 text-xs mt-1">{errors.dropoff}</p>
+                  <p className="text-red-500 dark:text-red-400 text-xs mt-1">
+                    {errors.dropoff}
+                  </p>
                 )}
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Fare (Optional)
                 </label>
                 <input
@@ -250,25 +250,25 @@ const CreateBookingModal: React.FC<CreateBookingModalProps> = ({
                   placeholder="Enter fare amount"
                   step="0.01"
                   min="0"
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-indigo-300 dark:focus:border-indigo-500 focus:ring focus:ring-indigo-200 dark:focus:ring-indigo-700 focus:ring-opacity-50"
                   disabled={isSubmitting}
                 />
               </div>
             </div>
 
-            <div className="px-6 py-3 bg-gray-50 flex justify-end rounded-b-lg">
+            <div className="px-6 py-3 bg-gray-50 dark:bg-gray-700 flex justify-end rounded-b-lg">
               <button
                 type="button"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-2 disabled:opacity-50"
+                className="bg-white dark:bg-gray-600 py-2 px-4 border border-gray-300 dark:border-gray-500 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-600 mr-2 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting || isLoadingCustomers}
-                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>

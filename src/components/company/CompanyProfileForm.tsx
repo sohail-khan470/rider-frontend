@@ -4,8 +4,6 @@ import { useCompanyStore } from "../../stores";
 export default function CompanyProfileForm() {
   const { currentCompany, getCompanyProfile } = useCompanyStore();
 
-  console.log(currentCompany);
-
   useEffect(() => {
     getCompanyProfile();
   }, []);
@@ -29,8 +27,6 @@ export default function CompanyProfileForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Send `company` data to backend via API
-
     alert("Company profile updated successfully!");
   };
 

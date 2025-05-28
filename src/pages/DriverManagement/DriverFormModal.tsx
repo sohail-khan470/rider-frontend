@@ -95,14 +95,14 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg p-8 max-w-md w-full">
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 max-w-md w-full dark:border-gray-800 dark:bg-white/[0.03]">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white/90">
             {driver ? "Edit Driver" : "Add New Driver"}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           >
             ✕
           </button>
@@ -111,7 +111,7 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               htmlFor="name"
             >
               Name
@@ -122,14 +122,14 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
               type="text"
               value={formData.name}
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:border-blue-500"
               required
             />
           </div>
 
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               htmlFor="email"
             >
               Email
@@ -140,14 +140,14 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
               type="email"
               value={formData.email}
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:border-blue-500"
               required
             />
           </div>
 
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               htmlFor="phone"
             >
               Phone
@@ -158,14 +158,14 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
               type="text"
               value={formData.phone}
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:border-blue-500"
               required
             />
           </div>
 
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               htmlFor="vehicleInfo"
             >
               Vehicle Information
@@ -175,14 +175,14 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
               name="vehicleInfo"
               value={formData.vehicleInfo}
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:border-blue-500"
               required
             />
           </div>
 
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               htmlFor="cityId"
             >
               City
@@ -190,7 +190,7 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
             {citiesLoading ? (
               <select
                 disabled
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-800 dark:border-gray-700 dark:text-white"
               >
                 <option>Loading cities...</option>
               </select>
@@ -200,7 +200,7 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
                 name="cityId"
                 value={formData.cityId}
                 onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:border-blue-500"
                 required
               >
                 <option value="">Select a city</option>
@@ -215,7 +215,7 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
 
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               htmlFor="status"
             >
               Status
@@ -225,7 +225,7 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:border-blue-500"
             >
               <option value="offline">Offline</option>
               <option value="online">Online</option>
@@ -235,7 +235,7 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
 
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300"
               htmlFor="timezone"
             >
               Timezone
@@ -245,7 +245,7 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
               name="timezone"
               value={formData.timezone}
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:border-blue-500"
             >
               {timezones.map((tz) => (
                 <option key={tz} value={tz}>
@@ -259,13 +259,13 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded mr-2"
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded mr-2 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline dark:bg-blue-600 dark:hover:bg-blue-800"
               disabled={loading || citiesLoading}
             >
               {loading ? (
