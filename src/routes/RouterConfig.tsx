@@ -18,6 +18,7 @@ import CompanySettings from "../pages/Company/CompanySettings";
 import PublicRoute from "./PublicRoute";
 import DriverManagement from "../pages/DriverManagement/DriverManagement";
 import CompanyManagementDashboard from "../pages/Company/CompanyManagement";
+import NotificationsPage from "../pages/Notifications/NotificationsPage";
 
 export const RouterConfig = () => {
   return (
@@ -65,6 +66,10 @@ export const RouterConfig = () => {
             <Route path="/company/bookings" element={<BookingManagement />} />
             <Route path="/company/staff" element={<StaffManagement />} />
             <Route path="/company/settings" element={<CompanySettings />} />
+            <Route
+              path="/company/notifications"
+              element={<NotificationsPage />}
+            />
           </Route>
         </Route>
       </Route>
@@ -72,6 +77,10 @@ export const RouterConfig = () => {
         <Route element={<RoleRoute type={["ADMIN", "super_admin"]} />}>
           <Route element={<AppLayout />}>
             <Route path="/company/drivers" element={<DriverManagement />} />
+            <Route
+              path="/company/notifications"
+              element={<NotificationsPage />}
+            />
           </Route>
         </Route>
       </Route>
