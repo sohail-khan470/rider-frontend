@@ -20,14 +20,14 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         const response = await authApi.login(email, password);
         console.log(response);
 
-        const type = response.data.user.type;
-        const token = response.data.token;
+        const type = response.user.type;
+        const token = response.token;
         const data = jwtDecode(token) as any;
         localStorage.setItem("authToken", token);
         localStorage.setItem("role", data.role);
 
         set({
-          user: response.data.user,
+          user: response.user,
           type,
           token,
           loading: false,

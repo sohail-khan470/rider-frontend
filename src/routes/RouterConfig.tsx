@@ -19,6 +19,7 @@ import PublicRoute from "./PublicRoute";
 import DriverManagement from "../pages/DriverManagement/DriverManagement";
 import CompanyManagementDashboard from "../pages/Company/CompanyManagement";
 import NotificationsPage from "../pages/Notifications/NotificationsPage";
+import LocationManagement from "../pages/LocationManagement/LocationManagement";
 
 export const RouterConfig = () => {
   return (
@@ -66,6 +67,7 @@ export const RouterConfig = () => {
             <Route path="/company/bookings" element={<BookingManagement />} />
             <Route path="/company/staff" element={<StaffManagement />} />
             <Route path="/company/settings" element={<CompanySettings />} />
+            <Route path="/locations" element={<LocationManagement />} />
             <Route
               path="/company/notifications"
               element={<NotificationsPage />}
@@ -81,6 +83,7 @@ export const RouterConfig = () => {
               path="/company/notifications"
               element={<NotificationsPage />}
             />
+            <Route path="/locations" element={<LocationManagement />} />
           </Route>
         </Route>
       </Route>

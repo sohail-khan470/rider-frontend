@@ -6,13 +6,13 @@ import {
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
-  LockIcon,
   PageIcon,
   TableIcon,
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import { SettingsIcon } from "lucide-react";
+import LocationManagement from "../pages/LocationManagement/LocationManagement";
+import { LocateIcon } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -66,9 +66,9 @@ const companyAdminItems: NavItem[] = [
     path: "/company/staff",
   },
   {
-    name: "Company Settings",
-    icon: <SettingsIcon />,
-    path: "/company/settings",
+    name: "Location Management",
+    icon: <LocateIcon />,
+    path: "/locations",
   },
 ];
 
