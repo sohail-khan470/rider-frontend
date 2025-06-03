@@ -70,6 +70,11 @@ const companyAdminItems: NavItem[] = [
     icon: <LocateIcon />,
     path: "/locations",
   },
+  {
+    name: "Customer Management",
+    icon: <UserCircleIcon />,
+    path: "/company/customers",
+  },
 ];
 
 const AppSidebar: React.FC = () => {

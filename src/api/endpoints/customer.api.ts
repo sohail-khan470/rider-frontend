@@ -25,14 +25,14 @@ export const customerApi = {
     updates: Partial<Customer>
   ): Promise<Customer> => {
     const response = await apiClient.patch(
-      `/companies/customers/${customerId}`,
+      `/api/customers/${customerId}`,
       updates
     );
     return response.data;
   },
 
   deleteCustomer: async (customerId: number): Promise<void> => {
-    await apiClient.delete(`/companies/customers/${customerId}`);
+    await apiClient.delete(`/api/customers/${customerId}`);
   },
 
   // Customer endpoints

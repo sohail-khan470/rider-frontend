@@ -4,6 +4,7 @@ import { immer } from "zustand/middleware/immer";
 import { customerApi } from "../api/endpoints/customer.api";
 import { Customer } from "./types/customer.types";
 import { CustomerResponse } from "../api/types/customer.types";
+import { jwtDecode } from "jwt-decode";
 
 type CustomerState = {
   customers: Customer[];
@@ -39,9 +40,12 @@ export const useCustomerStore = create<CustomerState & CustomerActions>()(
     error: null,
 
     fetchCustomers: async () => {
+      const token = localStorage.getItem("authToken") as any;
+      const decoded = jwtDecode(token) as any;
+      const companyId = decoded.companyId;
       set({ loading: true, error: null });
       try {
-        const customers = await customerApi.getCompanyCustomers();
+        const customers = await customerApi.getCompanyCustomers(companyId);
         set({ customers, loading: false });
       } catch (error) {
         set({ error: "Failed to fetch customers", loading: false });
@@ -64,13 +68,17 @@ export const useCustomerStore = create<CustomerState & CustomerActions>()(
     updateCustomer: async (customerId, updates) => {
       set({ loading: true, error: null });
       try {
-        const customer = await customerApi.updateCustomer(customerId, updates);
+        const customer = (await customerApi.updateCustomer(
+          customerId,
+          updates
+        )) as any;
+        console.log(customer);
         set((state) => {
           const index = state.customers.findIndex(
             (c: Customer) => c.id === customerId
           );
           if (index !== -1) {
-            state.customers[index] = customer;
+            state.customers[index] = customer.data;
           }
           if (state.currentCustomer?.id === customerId) {
             state.currentCustomer = customer;
@@ -134,6 +142,7 @@ export const useCustomerStore = create<CustomerState & CustomerActions>()(
     },
 
     getAllCustomers: async () => {
+      console.log("@getAllCustomers");
       set({ loading: true, error: null });
       try {
         const response = await customerApi.getAllCustomers();

@@ -293,7 +293,7 @@ export const useDriverStore = create<DriverState & DriverActions>()(
         set((state) => {
           if (state.currentDriver?.availability) {
             state.currentDriver.availability =
-              state.currentDriver.availability.filter((a) => a.id !== id);
+              state.currentDriver.availability.filter((a: any) => a.id !== id);
           }
           state.loading = false;
         });
