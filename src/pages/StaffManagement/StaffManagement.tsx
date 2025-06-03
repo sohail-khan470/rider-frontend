@@ -4,7 +4,7 @@ import { AddStaffModal } from "../../components/modals/AddStaffModal";
 import { useStaffStore } from "../../stores";
 
 export default function StaffPage() {
-  const { staff, fetchStaff } = useStaffStore();
+  const { fetchStaff } = useStaffStore();
 
   useEffect(() => {
     fetchStaff();

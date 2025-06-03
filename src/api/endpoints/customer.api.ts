@@ -1,6 +1,6 @@
 // src/api/endpoints/customer.api.ts
 import apiClient from "../client";
-import { Customer, CustomerResponse } from "../types/customer.types";
+import { Customer } from "../types/customer.types";
 
 export const customerApi = {
   // Company endpoints

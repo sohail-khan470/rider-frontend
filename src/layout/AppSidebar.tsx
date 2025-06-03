@@ -11,7 +11,6 @@ import {
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import LocationManagement from "../pages/LocationManagement/LocationManagement";
 import { LocateIcon } from "lucide-react";
 
 type NavItem = {
@@ -96,7 +95,6 @@ const AppSidebar: React.FC = () => {
   useEffect(() => {
     const checkUser = () => {
       const isSuperAdmin = localStorage.getItem("role") === "super_admin";
-      const role = localStorage.getItem("role");
 
       setCurrentNavItems(isSuperAdmin ? superAdminItems : companyAdminItems);
     };
