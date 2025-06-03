@@ -59,8 +59,24 @@ export const customerApi = {
     return response.data;
   },
 
-  getAllCustomers: async (): Promise<CustomerResponse> => {
-    const response = await apiClient.get("/api/customers/getAll");
-    return response.data;
+  // getAllCustomers: async (): Promise<CustomerResponse> => {
+  //   const response = await apiClient.get("/api/customers/getAll");
+  //   return response.data;
+  // },
+  getAllCustomers: async ({
+    companyId,
+    page = 1,
+    limit = 10,
+    search = "",
+  }: {
+    companyId: number;
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) => {
+    const response = await apiClient.get("/api/customers/getAll", {
+      params: { companyId, page, limit, search },
+    });
+    return response.data; // { success: true, message: string, data: Customer[], pagination: { page, limit, total, totalPages } }
   },
 };

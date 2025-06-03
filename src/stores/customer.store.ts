@@ -6,11 +6,19 @@ import { Customer } from "./types/customer.types";
 import { CustomerResponse } from "../api/types/customer.types";
 import { jwtDecode } from "jwt-decode";
 
+interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
 type CustomerState = {
   customers: Customer[];
   currentCustomer: Customer | null;
   loading: boolean;
   error: string | null;
+  pagination: Pagination | null; // Add pagination state
 };
 
 type CustomerActions = {
@@ -29,7 +37,12 @@ type CustomerActions = {
   loginCustomer: (email: string, password: string) => Promise<void>;
   getCustomerProfile: () => Promise<void>;
   logout: () => void;
-  getAllCustomers: () => Promise<void | CustomerResponse>;
+  getAllCustomers: (params: {
+    companyId: number;
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) => Promise<CustomerResponse>;
 };
 
 export const useCustomerStore = create<CustomerState & CustomerActions>()(
@@ -38,6 +51,7 @@ export const useCustomerStore = create<CustomerState & CustomerActions>()(
     currentCustomer: null,
     loading: false,
     error: null,
+    pagination: null, // Initialize pagination
 
     fetchCustomers: async () => {
       const token = localStorage.getItem("authToken") as any;
@@ -72,16 +86,15 @@ export const useCustomerStore = create<CustomerState & CustomerActions>()(
           customerId,
           updates
         )) as any;
-        console.log(customer);
         set((state) => {
           const index = state.customers.findIndex(
             (c: Customer) => c.id === customerId
           );
           if (index !== -1) {
-            state.customers[index] = customer.data;
+            state.customers[index] = customer.data; // Adjust based on API response structure
           }
           if (state.currentCustomer?.id === customerId) {
-            state.currentCustomer = customer;
+            state.currentCustomer = customer.data;
           }
           state.loading = false;
         });
@@ -141,16 +154,29 @@ export const useCustomerStore = create<CustomerState & CustomerActions>()(
       set({ currentCustomer: null });
     },
 
-    getAllCustomers: async () => {
-      console.log("@getAllCustomers");
+    getAllCustomers: async ({
+      companyId,
+      page = 1,
+      limit = 10,
+      search = "",
+    }) => {
       set({ loading: true, error: null });
       try {
-        const response = await customerApi.getAllCustomers();
-        set({ customers: response.data, loading: false });
+        const response = await customerApi.getAllCustomers({
+          companyId,
+          page,
+          limit,
+          search,
+        });
+        set({
+          customers: response.data,
+          pagination: response.pagination,
+          loading: false,
+        });
         return response;
       } catch (error) {
         set({ error: "Failed to fetch all customers", loading: false });
-        throw error; // Rethrow the error for further handling if needed
+        throw error;
       }
     },
   }))
