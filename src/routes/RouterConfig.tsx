@@ -21,6 +21,7 @@ import CompanyManagementDashboard from "../pages/Company/CompanyManagement";
 import NotificationsPage from "../pages/Notifications/NotificationsPage";
 import LocationManagement from "../pages/LocationManagement/LocationManagement";
 import CustomerManagement from "../pages/CustomerManagement/CustomerManagement";
+import SchedulePage from "../pages/ScheduleManagement/SchedulePage";
 
 export const RouterConfig = () => {
   return (
@@ -70,10 +71,12 @@ export const RouterConfig = () => {
             <Route path="/company/settings" element={<CompanySettings />} />
             <Route path="/locations" element={<LocationManagement />} />
             <Route path="/company/customers" element={<CustomerManagement />} />
+
             <Route
               path="/company/notifications"
               element={<NotificationsPage />}
             />
+            <Route path="/company/schedules" element={<SchedulePage />} />
           </Route>
         </Route>
       </Route>

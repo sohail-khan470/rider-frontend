@@ -55,6 +55,11 @@ const companyAdminItems: NavItem[] = [
     path: "/company/bookings",
   },
   {
+    name: "Schedule Management",
+    icon: <TableIcon />,
+    path: "/company/schedules",
+  },
+  {
     name: "Drivers Management",
     icon: <UserCircleIcon />,
     path: "/company/drivers",

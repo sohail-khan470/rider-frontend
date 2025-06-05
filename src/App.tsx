@@ -7,7 +7,6 @@ import { RouterConfig } from "./routes/RouterConfig";
 
 export default function App() {
   const initialize = useAuthStore((state) => state.initialize);
-  const user = useAuthStore((state) => state.user);
 
   // const permissions = user?.permissions;
   // if (permissions) {
