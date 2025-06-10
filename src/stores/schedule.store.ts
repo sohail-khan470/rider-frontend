@@ -145,11 +145,12 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
     cancelSchedule: async (id: number) => {
       set({ loading: true, error: null });
       try {
-        const updatedSchedule = await scheduleApi.cancelSchedule(id);
+        const updatedSchedule = (await scheduleApi.cancelSchedule(id)) as any;
+        console.log(updatedSchedule);
         set((state) => {
           const index = state.schedules.findIndex((s) => s.id === id);
           if (index !== -1) {
-            state.schedules[index] = updatedSchedule;
+            state.schedules[index] = updatedSchedule.data;
           }
           state.loading = false;
         });
@@ -165,11 +166,12 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
     startTrip: async (id: number) => {
       set({ loading: true, error: null });
       try {
-        const updatedSchedule = await scheduleApi.startTrip(id);
+        const updatedSchedule = (await scheduleApi.startTrip(id)) as any;
+        console.log(updatedSchedule);
         set((state) => {
           const index = state.schedules.findIndex((s) => s.id === id);
           if (index !== -1) {
-            state.schedules[index] = updatedSchedule;
+            state.schedules[index] = updatedSchedule.data;
           }
           state.loading = false;
         });

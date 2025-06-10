@@ -1,7 +1,6 @@
 // stores/notificationStore.ts
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { io, Socket } from "socket.io-client";
 
 import {
   notificationApi,
@@ -14,19 +13,10 @@ interface NotificationState {
   unreadCount: number;
   isLoading: boolean;
   error: string | null;
-  socket: Socket | null;
   isConnected: boolean;
 }
 
 interface NotificationActions {
-  // Socket management
-  initializeSocket: (
-    userId: number,
-    userRole: string,
-    companyId?: number
-  ) => void;
-  disconnectSocket: () => void;
-
   // State management
   addNotification: (notification: Notification) => void;
   markAsRead: (id: number) => void;
@@ -67,7 +57,6 @@ interface NotificationActions {
     limit?: number
   ) => Promise<void>;
 }
-const socketUrl = import.meta.env.VITE_SOCKET_URL || "ws://localhost:3000";
 
 export const useNotificationStore = create<
   NotificationState & NotificationActions
@@ -77,66 +66,9 @@ export const useNotificationStore = create<
     unreadCount: 0,
     isLoading: false,
     error: null,
-    socket: null,
     isConnected: false,
 
     // Socket management
-    initializeSocket: (userId, userRole, companyId) => {
-      const { socket: existingSocket } = get();
-
-      // Disconnect existing socket if any
-      if (existingSocket) {
-        existingSocket.disconnect();
-      }
-      const token = localStorage.getItem("authToken");
-
-      const newSocket = io(socketUrl, {
-        reconnection: true,
-        auth: {
-          token: token,
-          userId,
-          userRole,
-          companyId,
-        },
-      });
-
-      newSocket.on("connect", () => {
-        console.log("Socket connected");
-        set({ isConnected: true });
-      });
-
-      newSocket.on("disconnect", () => {
-        console.log("Socket disconnected");
-        set({ isConnected: false });
-      });
-
-      newSocket.on("newNotification", (notification: Notification) => {
-        console.log("New notification received:", notification);
-        get().addNotification(notification);
-      });
-
-      newSocket.on("notificationRead", (notificationId: number) => {
-        get().markAsRead(notificationId);
-      });
-
-      newSocket.on("notificationDeleted", (notificationId: number) => {
-        get().removeNotification(notificationId);
-      });
-
-      newSocket.on("allNotificationsRead", () => {
-        get().markAllAsRead();
-      });
-
-      set({ socket: newSocket });
-    },
-
-    disconnectSocket: () => {
-      const { socket } = get();
-      if (socket) {
-        socket.disconnect();
-        set({ socket: null, isConnected: false });
-      }
-    },
 
     // Local state management
     addNotification: (notification) => {

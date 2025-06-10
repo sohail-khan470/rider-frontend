@@ -17,8 +17,6 @@ export default function NotificationDropdown() {
     isLoading,
     error,
     isConnected,
-    initializeSocket,
-    disconnectSocket,
     fetchRecentNotifications,
     markNotificationAsRead,
     markAllNotificationsAsRead,
@@ -27,15 +25,10 @@ export default function NotificationDropdown() {
   useEffect(() => {
     if (user) {
       // Initialize socket connection
-      initializeSocket(user.id, user.role, user.companyId);
 
       // Fetch initial notifications
       fetchRecentNotifications(user.id, user.role, user.companyId, 10);
     }
-
-    return () => {
-      disconnectSocket();
-    };
   }, [user]);
 
   function toggleDropdown() {
