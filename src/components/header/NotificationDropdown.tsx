@@ -34,13 +34,11 @@ export default function NotificationDropdown() {
   function toggleDropdown() {
     setIsOpen(!isOpen);
   }
-
   function closeDropdown() {
     setIsOpen(false);
   }
 
   const handleMarkAsRead = async (notificationId: number) => {
-    console.log("HHHHHHHHHHH", notificationId);
     try {
       await markNotificationAsRead(notificationId);
     } catch (error) {

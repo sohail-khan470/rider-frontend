@@ -4,17 +4,13 @@ import moment from "moment";
 import { jwtDecode } from "jwt-decode";
 import { useCityStore } from "../../stores/city.store";
 import { useDriverStore } from "../../stores";
+
 const CreateScheduleModal = ({ onClose, onSubmit, loading }: any) => {
   const { cities, fetchCities } = useCityStore();
   const { drivers, fetchDrivers } = useDriverStore();
-  console.log(cities);
-  console.log(drivers);
 
   useEffect(() => {
     fetchCities();
-  }, []);
-
-  useEffect(() => {
     fetchDrivers();
   }, []);
 
@@ -35,7 +31,6 @@ const CreateScheduleModal = ({ onClose, onSubmit, loading }: any) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Format dates using Moment.js
       const formatDate = (dateString: string) => {
         if (!dateString) return undefined;
         return moment(dateString).format("YYYY-MM-DDTHH:mm:ssZ");
@@ -58,6 +53,11 @@ const CreateScheduleModal = ({ onClose, onSubmit, loading }: any) => {
     }
   };
 
+  // Filter drivers that belong to the current company
+  const companyDrivers = drivers.filter(
+    (driver) => driver.companyId === companyId
+  );
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900 max-w-md w-full max-h-[90vh] overflow-y-auto">
@@ -77,47 +77,65 @@ const CreateScheduleModal = ({ onClose, onSubmit, loading }: any) => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                Driver ID
+                Driver
               </label>
-              <input
-                type="number"
+              <select
                 required
                 value={formData.driverId}
                 onChange={(e) =>
                   setFormData({ ...formData, driverId: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-              />
+              >
+                <option value="">Select a driver</option>
+                {companyDrivers.map((driver) => (
+                  <option key={driver.id} value={driver.id}>
+                    {driver.name} ({driver.phone})
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                From City ID
+                From City
               </label>
-              <input
-                type="number"
+              <select
                 required
                 value={formData.fromCityId}
                 onChange={(e) =>
                   setFormData({ ...formData, fromCityId: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-              />
+              >
+                <option value="">Select departure city</option>
+                {cities.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                To City ID
+                To City
               </label>
-              <input
-                type="number"
+              <select
                 required
                 value={formData.toCityId}
                 onChange={(e) =>
                   setFormData({ ...formData, toCityId: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-              />
+              >
+                <option value="">Select destination city</option>
+                {cities.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>

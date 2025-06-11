@@ -1,35 +1,68 @@
 import { X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDriverStore } from "../../stores";
+import { useCityStore } from "../../stores/city.store";
+import { jwtDecode } from "jwt-decode";
+import moment from "moment";
 
 const EditScheduleModal = ({ schedule, onClose, onSubmit, loading }: any) => {
+  const { drivers, fetchDrivers } = useDriverStore();
+  const { cities, fetchCities } = useCityStore();
+
+  useEffect(() => {
+    fetchDrivers();
+    fetchCities();
+  }, []);
+
+  // Get company ID from token
+  const token = localStorage.getItem("authToken") as any;
+  const decoded = jwtDecode(token) as any;
+  const companyId = decoded.companyId;
+
+  // Format dates using moment for initial state
+  const formatDateForInput = (dateString: string) => {
+    return dateString ? moment(dateString).format("YYYY-MM-DDTHH:mm") : "";
+  };
+
   const [formData, setFormData] = useState({
     driverId: schedule.driverId.toString(),
     fromCityId: schedule.fromCityId.toString(),
     toCityId: schedule.toCityId.toString(),
-    departure: new Date(schedule.departure).toISOString().slice(0, 16),
-    estimatedArrival: new Date(schedule.estimatedArrival)
-      .toISOString()
-      .slice(0, 16),
-    returnTime: schedule.returnTime
-      ? new Date(schedule.returnTime).toISOString().slice(0, 16)
-      : "",
+    departure: formatDateForInput(schedule.departure),
+    estimatedArrival: formatDateForInput(schedule.estimatedArrival),
+    returnTime: formatDateForInput(schedule.returnTime),
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Format dates using Moment.js consistently with CreateScheduleModal
+      const formatDateForAPI = (dateString: string) => {
+        if (!dateString) return undefined;
+        return moment(dateString).format("YYYY-MM-DDTHH:mm:ssZ");
+      };
+
       await onSubmit({
         ...formData,
         driverId: parseInt(formData.driverId),
         fromCityId: parseInt(formData.fromCityId),
         toCityId: parseInt(formData.toCityId),
-        returnTime: formData.returnTime || undefined,
+        departure: formatDateForAPI(formData.departure),
+        estimatedArrival: formatDateForAPI(formData.estimatedArrival),
+        returnTime: formData.returnTime
+          ? formatDateForAPI(formData.returnTime)
+          : undefined,
       });
       onClose();
     } catch (error) {
       console.error("Failed to update schedule:", error);
     }
   };
+
+  // Filter drivers that belong to the current company
+  const companyDrivers = drivers.filter(
+    (driver) => driver.companyId === companyId
+  );
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50">
@@ -50,47 +83,65 @@ const EditScheduleModal = ({ schedule, onClose, onSubmit, loading }: any) => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Driver ID
+                Driver
               </label>
-              <input
-                type="number"
+              <select
                 required
                 value={formData.driverId}
                 onChange={(e) =>
                   setFormData({ ...formData, driverId: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              />
+              >
+                <option value="">Select a driver</option>
+                {companyDrivers.map((driver) => (
+                  <option key={driver.id} value={driver.id}>
+                    {driver.name} ({driver.phone})
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                From City ID
+                From City
               </label>
-              <input
-                type="number"
+              <select
                 required
                 value={formData.fromCityId}
                 onChange={(e) =>
                   setFormData({ ...formData, fromCityId: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              />
+              >
+                <option value="">Select departure city</option>
+                {cities.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                To City ID
+                To City
               </label>
-              <input
-                type="number"
+              <select
                 required
                 value={formData.toCityId}
                 onChange={(e) =>
                   setFormData({ ...formData, toCityId: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              />
+              >
+                <option value="">Select destination city</option>
+                {cities.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>

@@ -125,11 +125,14 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
     updateSchedule: async (id: number, data: Partial<CreateScheduleData>) => {
       set({ loading: true, error: null });
       try {
-        const updatedSchedule = await scheduleApi.updateSchedule(id, data);
+        const updatedSchedule = (await scheduleApi.updateSchedule(
+          id,
+          data
+        )) as any;
         set((state) => {
           const index = state.schedules.findIndex((s) => s.id === id);
           if (index !== -1) {
-            state.schedules[index] = updatedSchedule;
+            state.schedules[index] = updatedSchedule.data;
           }
           state.loading = false;
         });
