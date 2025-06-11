@@ -6,7 +6,7 @@ import {
   notificationApi,
   NotificationType,
   Notification,
-} from "../../api/endpoints/notification.api";
+} from "../api/endpoints/notification.api";
 
 interface NotificationState {
   notifications: Notification[];
@@ -25,11 +25,7 @@ interface NotificationActions {
   removeNotification: (id: number) => void;
 
   // API operations
-  fetchNotifications: (
-    userId: number,
-    userRole: string,
-    companyId?: number
-  ) => Promise<void>;
+  fetchNotifications: (companyId?: number) => Promise<void>;
   fetchUnreadNotifications: (
     userId: number,
     userRole: string,
@@ -117,17 +113,14 @@ export const useNotificationStore = create<
     },
 
     // API operations
-    fetchNotifications: async (userId, userRole, companyId) => {
+    fetchNotifications: async (companyId) => {
       set({ isLoading: true, error: null });
       try {
         const notifications =
-          userRole === "super_admin"
-            ? ((await notificationApi.getAllNotifications()) as any)
-            : ((await notificationApi.getCompanyNotifications(
-                companyId!
-              )) as any);
+          (await notificationApi.getAllNotifications()) as any;
 
         const allNotifications = notifications.data;
+        console.log(allNotifications, "allNotifications");
 
         set({
           notifications: allNotifications,

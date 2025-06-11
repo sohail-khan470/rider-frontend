@@ -4,7 +4,7 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Link } from "react-router";
 import { useAuthStore } from "../../stores";
 import { formatDistanceToNow } from "date-fns";
-import { useNotificationStore } from "../../stores/types/notification.store";
+import { useNotificationStore } from "../../stores/notification.store";
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,6 +40,7 @@ export default function NotificationDropdown() {
   }
 
   const handleMarkAsRead = async (notificationId: number) => {
+    console.log("HHHHHHHHHHH", notificationId);
     try {
       await markNotificationAsRead(notificationId);
     } catch (error) {

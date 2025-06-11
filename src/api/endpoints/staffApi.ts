@@ -23,7 +23,7 @@ export const staffApi = {
   },
 
   deleteStaff: async (staffId: number): Promise<void> => {
-    await apiClient.delete(`/company/staff/${staffId}`);
+    await apiClient.delete(`/api/company/staff/${staffId}`);
   },
 
   // Staff endpoints

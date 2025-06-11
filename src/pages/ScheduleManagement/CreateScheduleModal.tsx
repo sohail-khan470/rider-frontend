@@ -1,9 +1,23 @@
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import moment from "moment";
 import { jwtDecode } from "jwt-decode";
-
+import { useCityStore } from "../../stores/city.store";
+import { useDriverStore } from "../../stores";
 const CreateScheduleModal = ({ onClose, onSubmit, loading }: any) => {
+  const { cities, fetchCities } = useCityStore();
+  const { drivers, fetchDrivers } = useDriverStore();
+  console.log(cities);
+  console.log(drivers);
+
+  useEffect(() => {
+    fetchCities();
+  }, []);
+
+  useEffect(() => {
+    fetchDrivers();
+  }, []);
+
   const token = localStorage.getItem("authToken") as any;
   const decoded = jwtDecode(token) as any;
   const companyId = decoded.companyId;

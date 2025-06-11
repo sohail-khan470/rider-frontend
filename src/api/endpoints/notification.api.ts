@@ -122,7 +122,7 @@ export const notificationApi = {
     companyId: number
   ): Promise<{ count: number }> => {
     const response = await apiClient.patch(
-      `/api/company/${companyId}/notifications/read-all`
+      `/api/notifications/${companyId}/read-all`
     );
     return response.data;
   },

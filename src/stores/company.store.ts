@@ -5,6 +5,7 @@ import { companyApi } from "../api/endpoints/company.api";
 import { Company } from "./types/company.types";
 import { CompanyState, CompanyActions } from "./types/company.types";
 import { jwtDecode } from "jwt-decode";
+import { current } from "immer";
 
 export const useCompanyStore = create<CompanyState & CompanyActions>()(
   immer((set) => ({
@@ -73,9 +74,13 @@ export const useCompanyStore = create<CompanyState & CompanyActions>()(
     },
 
     updateCompanyProfile: async (updates) => {
+      const token = localStorage.getItem("authToken") || " ";
+      const decoded = jwtDecode(token) as any;
+      const companyId = decoded.companyId as number;
       set({ loading: true, error: null });
       try {
-        const company = await companyApi.updateProfile(updates);
+        const company = await companyApi.updateProfile(updates, companyId);
+        console.log(company);
         set({ currentCompany: company, loading: false });
       } catch (error) {
         set({ error: "Failed to update company profile", loading: false });

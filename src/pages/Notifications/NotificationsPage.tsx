@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 // import { useAuthStore } from "../../stores/authStore";
 
 import { formatDistanceToNow, format } from "date-fns";
-import { useNotificationStore } from "../../stores/types/notification.store";
+import { useNotificationStore } from "../../stores/notification.store";
 import { useAuthStore } from "../../stores";
 
 type FilterType = "all" | "unread" | "read";
@@ -37,6 +37,9 @@ export default function NotificationsPage() {
     []
   );
   const [searchTerm, setSearchTerm] = useState("");
+
+  console.log(notifications, "NNNNNNNNNNNNN");
+  console.log(user, "UUUUUUUUUUU");
 
   useEffect(() => {
     if (user) {

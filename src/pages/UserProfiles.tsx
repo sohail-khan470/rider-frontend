@@ -6,7 +6,7 @@ import { useAuthStore } from "../stores";
 import { useEffect } from "react";
 
 export default function UserProfiles() {
-  const { getUserProfile } = useAuthStore();
+  const { getUserProfile, user } = useAuthStore();
 
   useEffect(() => {
     getUserProfile();

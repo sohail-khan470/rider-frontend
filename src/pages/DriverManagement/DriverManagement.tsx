@@ -87,13 +87,13 @@ const DriverManagement: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white/90">
           Driver Management
         </h1>
         <button
           onClick={handleCreateDriver}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md dark:bg-blue-700 dark:hover:bg-blue-800"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md dark:bg-blue-700 dark:hover:bg-blue-800 w-full sm:w-auto"
         >
           Add New Driver
         </button>
@@ -105,113 +105,117 @@ const DriverManagement: React.FC = () => {
         </div>
       )}
 
-      <div className="rounded-2xl border border-gray-200 bg-white shadow-md dark:border-gray-800 dark:bg-white/[0.03]">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-800/50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  Email
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  Phone
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  City
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  Total Bookings
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200 dark:bg-white/[0.02] dark:divide-gray-700">
-              {drivers.map((driver) => (
-                <tr
-                  key={driver.id}
-                  className="hover:bg-gray-50 dark:hover:bg-white/[0.05]"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="font-medium text-gray-900 dark:text-white/90">
-                      {driver.name}
+      <div className="rounded-2xl border border-gray-200 bg-white shadow-md dark:border-gray-800 dark:bg-white/[0.03] overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-800/50">
+            <tr>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                Name
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400 hidden sm:table-cell">
+                Email
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400 hidden md:table-cell">
+                Phone
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                Status
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400 hidden lg:table-cell">
+                City
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400 hidden xl:table-cell">
+                Bookings
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200 dark:bg-white/[0.02] dark:divide-gray-700">
+            {drivers.map((driver) => (
+              <tr
+                key={driver.id}
+                className="hover:bg-gray-50 dark:hover:bg-white/[0.05]"
+              >
+                <td className="px-4 py-4 whitespace-nowrap">
+                  <div className="font-medium text-gray-900 dark:text-white/90">
+                    {driver.name}
+                    <div className="sm:hidden text-xs text-gray-500 dark:text-gray-400">
+                      {driver.email}
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {driver.email}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {driver.phone}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(
-                        driver.status
-                      )}`}
-                    >
-                      {driver.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {driver.city?.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {driver._count?.bookings || 0}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 space-x-2">
+                    <div className="md:hidden text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {driver.phone}
+                    </div>
+                  </div>
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hidden sm:table-cell">
+                  {driver.email}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hidden md:table-cell">
+                  {driver.phone}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap">
+                  <span
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(
+                      driver.status
+                    )}`}
+                  >
+                    {driver.status}
+                  </span>
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hidden lg:table-cell">
+                  {driver.city?.name}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hidden xl:table-cell">
+                  {driver._count?.bookings || 0}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 space-x-1 sm:space-x-2">
+                  <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
                     <button
                       onClick={() => handleViewDriver(driver.id)}
-                      className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
+                      className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 text-left sm:text-center"
                     >
                       View
                     </button>
                     <button
                       onClick={() => handleManageAvailability(driver.id)}
-                      className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                      className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 text-left sm:text-center"
                     >
                       Availability
                     </button>
-                    <div className="inline-block">
-                      <select
-                        value={driver.status}
-                        onChange={(e) =>
-                          handleUpdateStatus(
-                            driver.id,
-                            e.target.value as DriverStatus
-                          )
-                        }
-                        className="mt-1 block w-full py-1 px-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                      >
-                        <option value="online">Online</option>
-                        <option value="offline">Offline</option>
-                        <option value="on_trip">On Trip</option>
-                      </select>
-                    </div>
+                    <select
+                      value={driver.status}
+                      onChange={(e) =>
+                        handleUpdateStatus(
+                          driver.id,
+                          e.target.value as DriverStatus
+                        )
+                      }
+                      className="mt-1 block w-full py-1 px-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-xs sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                    >
+                      <option value="online">Online</option>
+                      <option value="offline">Offline</option>
+                      <option value="on_trip">On Trip</option>
+                    </select>
                     <button
                       onClick={() => handleDeleteDriver(driver.id)}
-                      className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                      className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 text-left sm:text-center"
                     >
                       Delete
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* Driver Details Modal */}
       {isModalOpen && currentDriver && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 max-w-2xl w-full max-h-screen overflow-y-auto dark:border-gray-800 dark:bg-white/[0.03]">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+          <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 w-full max-w-2xl max-h-screen overflow-y-auto dark:border-gray-800 dark:bg-white/[0.03]">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-800 dark:text-white/90">
                 Driver Details
@@ -224,7 +228,7 @@ const DriverManagement: React.FC = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Name</p>
                 <p className="font-medium dark:text-white/90">

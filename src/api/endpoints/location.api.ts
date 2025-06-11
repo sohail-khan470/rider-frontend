@@ -31,7 +31,6 @@ export const locationApi = {
 
   getAllLocations: async (): Promise<SearchedLocation[]> => {
     const response = await apiClient.get("/api/locations");
-    console.log(response);
     return response.data;
   },
 

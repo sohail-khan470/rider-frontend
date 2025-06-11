@@ -18,13 +18,14 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       set({ loading: true, error: null });
       try {
         const response = await authApi.login(email, password);
-        console.log(response);
 
         const type = response.user.type;
         const token = response.token;
         const data = jwtDecode(token) as any;
         localStorage.setItem("authToken", token);
         localStorage.setItem("role", data.role);
+
+        console.log(response);
 
         set({
           user: response.user,
@@ -33,6 +34,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           loading: false,
         });
       } catch (error) {
+        console.log(error);
         set({
           error: "Invalid  credentials, try again",
           loading: false,
@@ -60,9 +62,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       try {
         const response = (await authApi.getUserProfile()) as any;
         set({
-          user: {
-            ...response.data.profile.user, // Merge with profile data
-          },
+          user: response.data.user, // Merge with profile data
+
           loading: false,
         });
       } catch (error) {
