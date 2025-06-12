@@ -1,26 +1,18 @@
 import { useEffect, useRef } from "react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import { Driver } from "../../stores/types/driver.types";
 
-// Add Google Maps types to the global window object
-declare global {
-  interface Window {
-    google?: {
-      maps: {
-        Map: any;
-        Marker: any;
-        Circle: any;
-        InfoWindow: any;
-        LatLng: any;
-        MapTypeId: {
-          ROADMAP: string;
-        };
-        SymbolPath: {
-          CIRCLE: any;
-        };
-      };
-    };
-  }
-}
+// Fix for default markers in Leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+});
 
 interface NearbyDriversMapProps {
   drivers: Driver[];
@@ -36,60 +28,82 @@ const NearbyDriversMap = ({
   radius,
 }: NearbyDriversMapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const googleMapRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
-  const circleRef = useRef<any>(null);
+  const leafletMapRef = useRef<L.Map | null>(null);
+  const markersRef = useRef<L.Marker[]>([]);
+  const circleRef = useRef<L.Circle | null>(null);
+
+  // Custom icons for different driver statuses
+  const createDriverIcon = (status: string) => {
+    let color = "";
+    switch (status) {
+      case "online":
+        color = "green";
+        break;
+      case "on_trip":
+        color = "blue";
+        break;
+      case "offline":
+        color = "gray";
+        break;
+      default:
+        color = "red";
+    }
+
+    return L.divIcon({
+      className: "custom-driver-marker",
+      html: `<div style="
+        background-color: ${color};
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      "></div>`,
+      iconSize: [16, 16],
+      iconAnchor: [8, 8],
+    });
+  };
 
   useEffect(() => {
     // Initialize the map
-    const googleMaps = window.google?.maps;
-    if (googleMaps && mapRef.current && !googleMapRef.current) {
-      const center = { lat: centerLat, lng: centerLng };
-      const mapOptions = {
-        center,
-        zoom: 13,
-        mapTypeId: googleMaps.MapTypeId.ROADMAP,
-        mapTypeControl: true,
-        streetViewControl: false,
-        fullscreenControl: true,
-      };
+    if (mapRef.current && !leafletMapRef.current) {
+      leafletMapRef.current = L.map(mapRef.current).setView(
+        [centerLat, centerLng],
+        13
+      );
 
-      googleMapRef.current = new googleMaps.Map(mapRef.current, mapOptions);
+      // Add OpenStreetMap tile layer
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+      }).addTo(leafletMapRef.current);
 
       // Add the search radius circle
-      circleRef.current = new googleMaps.Circle({
-        strokeColor: "#4338CA",
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
+      circleRef.current = L.circle([centerLat, centerLng], {
+        color: "#4338CA",
         fillColor: "#4338CA",
         fillOpacity: 0.1,
-        map: googleMapRef.current,
-        center,
         radius: radius * 1000, // Convert km to meters
-      });
+      }).addTo(leafletMapRef.current);
     }
 
     return () => {
-      // Clean up markers on unmount
-      markersRef.current.forEach((marker) => marker.setMap(null));
-      markersRef.current = [];
-
-      // Clean up circle on unmount
-      if (circleRef.current) {
-        circleRef.current.setMap(null);
-        circleRef.current = null;
+      // Clean up map on unmount
+      if (leafletMapRef.current) {
+        leafletMapRef.current.remove();
+        leafletMapRef.current = null;
       }
     };
   }, []);
 
   useEffect(() => {
     // Update map center and circle when location changes
-    if (googleMapRef.current) {
-      const center = { lat: centerLat, lng: centerLng };
-      googleMapRef.current.setCenter(center);
+    if (leafletMapRef.current) {
+      leafletMapRef.current.setView([centerLat, centerLng], 13);
 
       if (circleRef.current) {
-        circleRef.current.setCenter(center);
+        circleRef.current.setLatLng([centerLat, centerLng]);
         circleRef.current.setRadius(radius * 1000); // Convert km to meters
       }
     }
@@ -97,65 +111,54 @@ const NearbyDriversMap = ({
 
   useEffect(() => {
     // Clear existing markers
-    markersRef.current.forEach((marker) => marker.setMap(null));
+    markersRef.current.forEach((marker) => {
+      if (leafletMapRef.current) {
+        leafletMapRef.current.removeLayer(marker);
+      }
+    });
     markersRef.current = [];
 
     // Add markers for drivers
-    const googleMaps = window.google?.maps;
-    if (googleMapRef.current && googleMaps) {
+    if (leafletMapRef.current) {
       drivers.forEach((driver) => {
         // Check if location data is available on the driver object
         if (driver.location) {
-          const position = {
-            lat: driver.location.lat,
-            lng: driver.location.lng,
-          };
+          const position: [number, number] = [
+            driver.location.lat,
+            driver.location.lng,
+          ];
 
-          // Determine icon color based on driver status
-          let iconColor = "";
-          switch (driver.status) {
-            case "online":
-              iconColor = "green";
-              break;
-            case "on_trip":
-              iconColor = "blue";
-              break;
-            case "offline":
-              iconColor = "gray";
-              break;
-            default:
-              iconColor = "red";
-          }
-
-          const marker = new googleMaps.Marker({
-            position,
-            map: googleMapRef.current,
+          const marker = L.marker(position, {
+            icon: createDriverIcon(driver.status),
             title: driver.name || `Driver ${driver.id}`,
-            icon: {
-              path: googleMaps.SymbolPath.CIRCLE,
-              fillColor: iconColor,
-              fillOpacity: 1,
-              strokeWeight: 1,
-              scale: 8,
-            },
-          });
+          }).addTo(leafletMapRef.current!);
 
-          // Add info window with driver details
-          const infoWindow = new googleMaps.InfoWindow({
-            content: `
-              <div>
-                <h3 style="font-weight: bold;">${
-                  driver.name || `Driver ${driver.id}`
-                }</h3>
-                <p>Status: ${driver.status}</p>
-                <p>Distance: ${driver.distance?.toFixed(2) || "N/A"} km</p>
-              </div>
-            `,
-          });
+          // Add popup with driver details
+          const popupContent = `
+            <div>
+              <h3 style="font-weight: bold; margin: 0 0 8px 0;">${
+                driver.name || `Driver ${driver.id}`
+              }</h3>
+              <p style="margin: 4px 0;"><strong>Status:</strong> ${
+                driver.status
+              }</p>
+              <p style="margin: 4px 0;"><strong>Distance:</strong> ${
+                driver.distance?.toFixed(2) || "N/A"
+              } km</p>
+              ${
+                driver.vehicleInfo
+                  ? `<p style="margin: 4px 0;"><strong>Vehicle:</strong> ${driver.vehicleInfo}</p>`
+                  : ""
+              }
+              ${
+                driver.phone
+                  ? `<p style="margin: 4px 0;"><strong>Phone:</strong> ${driver.phone}</p>`
+                  : ""
+              }
+            </div>
+          `;
 
-          marker.addListener("click", () => {
-            infoWindow.open(googleMapRef.current, marker);
-          });
+          marker.bindPopup(popupContent);
 
           markersRef.current.push(marker);
         }
@@ -166,13 +169,30 @@ const NearbyDriversMap = ({
   return (
     <div className="relative h-full w-full">
       <div ref={mapRef} className="h-full w-full rounded"></div>
-      {!window.google && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75">
-          <p className="text-lg font-medium">
-            Google Maps API not loaded. Please check your API key.
-          </p>
+
+      {/* Legend for driver statuses */}
+      <div className="absolute top-4 right-4 bg-white p-3 rounded shadow-md z-[1000]">
+        <h4 className="font-semibold text-sm mb-2">Driver Status</h4>
+        <div className="space-y-1 text-xs">
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+            <span>Online</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+            <span>On Trip</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-gray-500 rounded-full mr-2"></div>
+            <span>Offline</span>
+          </div>
         </div>
-      )}
+      </div>
+
+      {/* Map controls info */}
+      <div className="absolute bottom-4 left-4 bg-white px-2 py-1 rounded shadow text-xs text-gray-600 z-[1000]">
+        Powered by OpenStreetMap
+      </div>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-// src/components/CustomerManagement.tsx
 import React, { useState, useEffect } from "react";
 import {
   Search,
@@ -8,7 +7,6 @@ import {
   User,
   Mail,
   Phone,
-  Building2,
   Loader2,
   AlertCircle,
   X,
@@ -146,7 +144,7 @@ const CustomerManagement = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "companyId" ? parseInt(value) || companyId : value,
+      [name]: value,
     }));
   };
 
@@ -215,7 +213,7 @@ const CustomerManagement = () => {
         ) : (
           <>
             {/* Table Header */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 p-4 border-b border-gray-200 dark:border-gray-800 font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800/50">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border-b border-gray-200 dark:border-gray-800 font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800/50">
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4" />
                 Name
@@ -227,10 +225,6 @@ const CustomerManagement = () => {
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
                 Phone
-              </div>
-              <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4" />
-                Company ID
               </div>
               <div className="text-center">Actions</div>
             </div>
@@ -252,7 +246,7 @@ const CustomerManagement = () => {
               customers.map((customer) => (
                 <div
                   key={customer.id}
-                  className="grid grid-cols-1 md:grid-cols-5 gap-4 p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                  className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                 >
                   <div className="font-medium text-gray-900 dark:text-white">
                     {customer.name}
@@ -262,9 +256,6 @@ const CustomerManagement = () => {
                   </div>
                   <div className="text-gray-600 dark:text-gray-400">
                     {customer.phone}
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-400">
-                    {customer.companyId}
                   </div>
                   <div className="flex items-center justify-center gap-2">
                     <button
@@ -399,24 +390,6 @@ const CustomerManagement = () => {
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Enter phone number"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="companyId"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                  >
-                    Company ID
-                  </label>
-                  <input
-                    type="number"
-                    id="companyId"
-                    name="companyId"
-                    value={formData.companyId}
-                    onChange={handleInputChange}
-                    min="1"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter company ID"
                   />
                 </div>
               </div>

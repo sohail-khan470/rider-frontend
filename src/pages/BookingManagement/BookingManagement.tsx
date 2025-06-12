@@ -338,13 +338,13 @@ const BookingManagement: React.FC = () => {
                     </td>
                   </tr>
                 ) : (
-                  filteredBookings.map((booking: Booking) => (
+                  filteredBookings.map((booking: Booking, index: number) => (
                     <tr
                       key={booking?.id || Math.random()}
                       className="hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
                       <td className="px-2 py-2 sm:px-3 sm:py-3 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
-                        #{booking?.id || "N/A"}
+                        {index + 1 || "N/A"}
                       </td>
                       <td className="hidden xs:table-cell px-2 py-2 sm:px-3 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                         {booking?.customer?.name ||

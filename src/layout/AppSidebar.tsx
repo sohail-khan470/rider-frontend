@@ -44,20 +44,20 @@ const companyAdminItems: NavItem[] = [
     name: "Dashboard",
     path: "/company/home",
   },
+  // {
+  //   icon: <UserCircleIcon />,
+  //   name: "Admin Detail",
+  //   path: "/company/profile",
+  // },
   {
-    icon: <UserCircleIcon />,
-    name: "Admin Detail",
-    path: "/company/profile",
+    name: "Schedule Management",
+    icon: <TableIcon />,
+    path: "/company/schedules",
   },
   {
     name: "Bookings Management",
     icon: <TableIcon />,
     path: "/company/bookings",
-  },
-  {
-    name: "Schedule Management",
-    icon: <TableIcon />,
-    path: "/company/schedules",
   },
   {
     name: "Drivers Management",

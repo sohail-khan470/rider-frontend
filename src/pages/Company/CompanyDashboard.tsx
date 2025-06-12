@@ -529,11 +529,13 @@ const CompanyDashboard: React.FC = () => {
                 Addresses
               </h2>
               {company.addresses && company.addresses.length > 0 ? (
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {" "}
+                  {/* Changed to grid layout */}
                   {company.addresses?.map((address: CompanyAddress) => (
                     <div
                       key={address.id}
-                      className="border-l-4 border-blue-500 pl-4"
+                      className="border-l-4 border-blue-500 pl-4 p-3 bg-gray-50 dark:bg-gray-700 rounded" // Added some padding and background
                     >
                       <div className="flex items-center space-x-2 mb-1">
                         <MapPin className="w-4 h-4 text-gray-400" />
@@ -561,7 +563,7 @@ const CompanyDashboard: React.FC = () => {
             </div>
 
             {/* Media */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-300 dark:border-gray-700 p-6">
+            {/* <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-300 dark:border-gray-700 p-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Media
               </h2>
@@ -605,7 +607,7 @@ const CompanyDashboard: React.FC = () => {
                   No media files available
                 </p>
               )}
-            </div>
+            </div> */}
           </div>
 
           {/* Company Details */}

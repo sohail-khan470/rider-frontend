@@ -190,11 +190,11 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
     markArrived: async (id: number) => {
       set({ loading: true, error: null });
       try {
-        const updatedSchedule = await scheduleApi.markArrived(id);
+        const updatedSchedule = (await scheduleApi.markArrived(id)) as any;
         set((state) => {
           const index = state.schedules.findIndex((s) => s.id === id);
           if (index !== -1) {
-            state.schedules[index] = updatedSchedule;
+            state.schedules[index] = updatedSchedule.data;
           }
           state.loading = false;
         });
@@ -210,11 +210,12 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
     startReturn: async (id: number) => {
       set({ loading: true, error: null });
       try {
-        const updatedSchedule = await scheduleApi.startReturn(id);
+        const updatedSchedule = (await scheduleApi.startReturn(id)) as any;
+        console.log(updatedSchedule);
         set((state) => {
           const index = state.schedules.findIndex((s) => s.id === id);
           if (index !== -1) {
-            state.schedules[index] = updatedSchedule;
+            state.schedules[index] = updatedSchedule.data;
           }
           state.loading = false;
         });
@@ -230,11 +231,11 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
     completeSchedule: async (id: number) => {
       set({ loading: true, error: null });
       try {
-        const updatedSchedule = await scheduleApi.completeSchedule(id);
+        const updatedSchedule = (await scheduleApi.completeSchedule(id)) as any;
         set((state) => {
           const index = state.schedules.findIndex((s) => s.id === id);
           if (index !== -1) {
-            state.schedules[index] = updatedSchedule;
+            state.schedules[index] = updatedSchedule.data;
           }
           state.loading = false;
         });

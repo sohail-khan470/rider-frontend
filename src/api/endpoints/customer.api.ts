@@ -13,10 +13,7 @@ export const customerApi = {
   createCustomer: async (
     customerData: Omit<Customer, "id" | "createdAt" | "updatedAt">
   ): Promise<Customer> => {
-    const response = await apiClient.post(
-      "/api/company/customers",
-      customerData
-    );
+    const response = await apiClient.post("/api/customers", customerData);
     return response.data;
   },
 
@@ -58,11 +55,6 @@ export const customerApi = {
     const response = await apiClient.get("/customers/me");
     return response.data;
   },
-
-  // getAllCustomers: async (): Promise<CustomerResponse> => {
-  //   const response = await apiClient.get("/api/customers/getAll");
-  //   return response.data;
-  // },
   getAllCustomers: async ({
     companyId,
     page = 1,
