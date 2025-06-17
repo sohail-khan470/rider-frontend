@@ -17,9 +17,8 @@ import {
 } from "lucide-react";
 import { useCompanyStore } from "../../stores";
 import { Company } from "../../stores/types/company.types";
-export default function CompanyManagementDashboard() {
-  // Use company store
 
+export default function CompanyManagementDashboard() {
   const {
     companies,
     loading,
@@ -46,8 +45,7 @@ export default function CompanyManagementDashboard() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [newCompany, setNewCompany] = useState({
     name: "",
-    email: "",
-    timezone: "UTC", // default timezone
+    timezone: "UTC",
     isApproved: false,
   });
 
@@ -56,12 +54,12 @@ export default function CompanyManagementDashboard() {
     fetchAllCompanies();
   }, [fetchAllCompanies]);
 
-  // Functions for company management
+  // Company management functions
   const handleApproveCompany = async (id: number) => {
     try {
       await approveCompanyAction(id);
       toast.success("Company approved successfully!");
-      fetchAllCompanies(); // Refresh the list
+      fetchAllCompanies();
     } catch (error) {
       console.error("Error approving company:", error);
       toast.error(`Failed to approve company: ${error.message}`);
@@ -76,7 +74,7 @@ export default function CompanyManagementDashboard() {
       toast.success("Company deleted successfully!");
       setShowDeleteConfirmation(false);
       setCompanyToDelete(null);
-      fetchAllCompanies(); // Refresh the list
+      fetchAllCompanies();
     } catch (error) {
       console.error("Error deleting company:", error);
       toast.error(`Failed to delete company: ${error.message}`);
@@ -88,28 +86,20 @@ export default function CompanyManagementDashboard() {
     try {
       await registerCompany({
         name: newCompany.name,
-        email: newCompany.email,
         timezone: newCompany.timezone,
         isApproved: newCompany.isApproved,
       });
 
-      // Show success toast
       toast.success("Company registered successfully!");
-
-      // Reset form and close modal
       setNewCompany({
         name: "",
-        email: "",
         timezone: "UTC",
         isApproved: false,
       });
       setShowAddCompanyModal(false);
-
-      // Refresh the companies list
       await fetchAllCompanies();
     } catch (error) {
       console.error("Error registering company:", error);
-      // Show error toast
       toast.error(`Failed to register company: ${error.message}`);
     } finally {
       setIsRegistering(false);
@@ -127,21 +117,16 @@ export default function CompanyManagementDashboard() {
   };
 
   const handleViewCompanyDetails = (id: number) => {
-    // Navigate to company details page
-    // In a real app with router: navigate(`/companies/${id}`);
     console.log("View company details:", id);
   };
 
-  // You'll need to implement the actual submit handler for the edit form
   const handleEditCompany = async (e: React.FormEvent) => {
-    console.log(selectedCompany);
     e.preventDefault();
     if (!selectedCompany) return;
 
     try {
       await editCompany(selectedCompany.id, {
         name: selectedCompany.name,
-        email: selectedCompany.email,
         timezone: selectedCompany.timezone,
         isApproved: selectedCompany.isApproved,
       });
@@ -149,7 +134,7 @@ export default function CompanyManagementDashboard() {
       toast.success("Company updated successfully!");
       setShowEditCompanyModal(false);
       setSelectedCompany(null);
-      await fetchAllCompanies(); // Refresh the list
+      await fetchAllCompanies();
     } catch (error) {
       console.error("Error updating company:", error);
       toast.error(`Failed to update company: ${error.message}`);
@@ -164,10 +149,8 @@ export default function CompanyManagementDashboard() {
           statusFilter === "approved" ? company.isApproved : !company.isApproved
         );
 
-  const filteredCompanies = statusFilteredCompanies.filter(
-    (company) =>
-      company.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      company.email?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCompanies = statusFilteredCompanies.filter((company) =>
+    company.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const sortedCompanies = [...filteredCompanies].sort((a, b) => {
@@ -193,11 +176,10 @@ export default function CompanyManagementDashboard() {
     }
   };
 
-  const formatDate = (dateString, timezone = "UTC") => {
+  const formatDate = (dateString: string, timezone = "UTC") => {
     return moment(dateString).tz(timezone).format("MMM D, YYYY h:mm A z");
   };
 
-  // For displaying the sort indicator
   const getSortIndicator = (field: string) => {
     if (sortField !== field) return null;
     return sortDirection === "asc" ? (
@@ -263,7 +245,7 @@ export default function CompanyManagementDashboard() {
               />
               <input
                 type="text"
-                placeholder="Search companies by name or email..."
+                placeholder="Search companies by name..."
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -315,16 +297,6 @@ export default function CompanyManagementDashboard() {
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                      onClick={() => toggleSort("email")}
-                    >
-                      <div className="flex items-center space-x-1">
-                        <span>Email</span>
-                        {getSortIndicator("email")}
-                      </div>
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                       onClick={() => toggleSort("isApproved")}
                     >
                       <div className="flex items-center space-x-1">
@@ -360,7 +332,7 @@ export default function CompanyManagementDashboard() {
                   {sortedCompanies.length === 0 ? (
                     <tr>
                       <td
-                        colSpan={6}
+                        colSpan={5}
                         className="px-6 py-4 text-center text-gray-500"
                       >
                         {searchQuery
@@ -377,11 +349,6 @@ export default function CompanyManagementDashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-500">
-                            {company.email || "N/A"}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
                           {company.isApproved ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                               Approved
@@ -392,9 +359,6 @@ export default function CompanyManagementDashboard() {
                             </span>
                           )}
                         </td>
-                        {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {formatDate(company.createdAt)}
-                        </td> */}
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {formatDate(company.createdAt, company.timezone)}
                         </td>
@@ -458,6 +422,7 @@ export default function CompanyManagementDashboard() {
             </div>
           )}
         </div>
+
         {/* Add Company Modal */}
         {showAddCompanyModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -495,24 +460,6 @@ export default function CompanyManagementDashboard() {
                     value={newCompany.name}
                     onChange={(e) =>
                       setNewCompany({ ...newCompany, name: e.target.value })
-                    }
-                    required
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                    value={newCompany.email}
-                    onChange={(e) =>
-                      setNewCompany({ ...newCompany, email: e.target.value })
                     }
                     required
                   />
@@ -570,9 +517,7 @@ export default function CompanyManagementDashboard() {
                   <button
                     type="submit"
                     className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={
-                      isRegistering || !newCompany.name || !newCompany.email
-                    }
+                    disabled={isRegistering || !newCompany.name}
                   >
                     {isRegistering ? (
                       <span className="flex items-center justify-center">
@@ -640,27 +585,6 @@ export default function CompanyManagementDashboard() {
                       setSelectedCompany({
                         ...selectedCompany,
                         name: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="edit-email"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="edit-email"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                    value={selectedCompany.email || ""}
-                    onChange={(e) =>
-                      setSelectedCompany({
-                        ...selectedCompany,
-                        email: e.target.value,
                       })
                     }
                     required
