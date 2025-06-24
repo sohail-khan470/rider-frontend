@@ -82,5 +82,16 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         type: "",
       });
     },
+    registerAdmin: async (user) => {
+      set({ loading: true, error: null });
+      try {
+        const response = (await authApi.registerAdmin(user)) as any;
+        console.log(response);
+
+        set({ user: response.data, loading: false });
+      } catch (error) {
+        set({ error: "Failed to register user", loading: false });
+      }
+    },
   }))
 );

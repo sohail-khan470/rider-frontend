@@ -34,7 +34,7 @@ const superAdminItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Company Admin Management",
-    path: "/company-admin-management",
+    path: "/admin-management",
   },
 ];
 

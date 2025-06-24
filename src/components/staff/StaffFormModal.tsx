@@ -66,8 +66,8 @@ export default function StaffFormModal({
 
     // Only validate password if the field is shown and not empty
     if (showPasswordField && formData.password) {
-      if (formData.password.length < 8) {
-        newErrors.password = "Password must be at least 8 characters";
+      if (formData.password.length < 5) {
+        newErrors.password = "Password must be at least 5 characters";
       }
     }
 

@@ -9,7 +9,7 @@ const PublicRoute = ({ children }: { children: JSX.Element }) => {
     return <Navigate to="/" replace />;
   }
 
-  if (authToken && userRole === "ADMIN") {
+  if (authToken && (userRole === "ADMIN" || "MANAGER" || "OPERATOR")) {
     return <Navigate to="/company/home" replace />;
   }
 

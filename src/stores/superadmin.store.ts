@@ -66,7 +66,8 @@ export const useSuperAdminStore = create<SuperAdminState & SuperAdminActions>()(
       set({ loading: true, error: null });
       try {
         const response = await superAdminApi.getStatistics();
-        set({ statistics: response.data, loading: false });
+        console.log(response.stats);
+        set({ statistics: response.stats, loading: false });
       } catch (error) {
         set({
           error: "Error getting data",

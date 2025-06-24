@@ -5,7 +5,6 @@ import { companyApi } from "../api/endpoints/company.api";
 import { Company } from "./types/company.types";
 import { CompanyState, CompanyActions } from "./types/company.types";
 import { jwtDecode } from "jwt-decode";
-import { current } from "immer";
 
 export const useCompanyStore = create<CompanyState & CompanyActions>()(
   immer((set) => ({

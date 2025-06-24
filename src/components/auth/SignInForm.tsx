@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Added useNavigate
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
@@ -78,8 +78,8 @@ export default function SignInForm() {
     if (!formData.password) {
       newErrors.password = "Password is required";
       valid = false;
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } else if (formData.password.length < 5) {
+      newErrors.password = "Password must be at least 5 characters";
       valid = false;
     }
 

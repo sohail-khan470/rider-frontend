@@ -14,61 +14,57 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
   driver,
   onClose,
 }) => {
-  const {
-    drivers,
-    createDriver,
-    updateDriver,
-    loading,
-    fetchDrivers,
-    updateDriverStatus,
-  } = useDriverStore();
+  const { createDriver, updateDriver, loading, updateDriverStatus } =
+    useDriverStore();
   const { cities, fetchCities, loading: citiesLoading } = useCityStore();
 
   const [formData, setFormData] = useState({
-    name: driver?.name || "",
-    email: driver?.email || "",
-    phone: driver?.phone || "",
-    vehicleInfo: driver?.vehicleInfo || "",
-    cityId: driver?.cityId || 0,
-    status: driver?.status || ("offline" as DriverStatus),
-    timezone: driver?.timezone || moment.tz.guess(), // Default to user's timezone
+    name: "",
+    email: "",
+    phone: "",
+    vehicleInfo: "",
+    cityId: 0,
+    status: "offline" as DriverStatus,
+    timezone: moment.tz.guess(),
   });
 
-  // Get all timezones from moment-timezone
+  // Initialize form data when driver prop changes
+  useEffect(() => {
+    if (driver) {
+      setFormData({
+        name: driver.name,
+        email: driver.email,
+        phone: driver.phone,
+        vehicleInfo: driver.vehicleInfo,
+        cityId: driver.cityId,
+        status: driver.status,
+        timezone: driver.timezone,
+      });
+    }
+  }, [driver]);
+
+  // Fetch cities only once when component mounts
+  useEffect(() => {
+    fetchCities();
+  }, [fetchCities]);
+
   const timezones = moment.tz.names();
 
-  useEffect(() => {
-    fetchDrivers();
-    fetchCities();
-  }, []);
-
-  const handleChange = async (
+  const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
     const { name, value } = e.target;
-
-    // Update local form state
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: name === "cityId" ? Number(value) : value,
-    });
-
-    // If changing status and we have a driver, update in the store
-    if (name === "status" && driver) {
-      try {
-        await updateDriverStatus(driver.id, value as DriverStatus);
-      } catch (error) {
-        console.error("Failed to update status:", error);
-      }
-    }
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Get companyId from JWT
     const token = localStorage.getItem("authToken") || "";
     const decoded = jwtDecode(token) as any;
     const companyId = decoded.companyId;
@@ -82,10 +78,8 @@ const DriverFormModal: React.FC<DriverFormModalProps> = ({
     try {
       if (driver) {
         await updateDriver(driver.id, driverData);
-        fetchDrivers();
       } else {
-        await createDriver(driverData as any);
-        await fetchDrivers();
+        await createDriver(driverData);
       }
       onClose();
     } catch (error) {

@@ -1,6 +1,8 @@
+// Updated Company Management Dashboard with dark mode support
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import moment from "moment-timezone";
+import "moment-timezone/data/packed/latest.json";
 import {
   PlusCircle,
   Edit,
@@ -27,9 +29,7 @@ export default function CompanyManagementDashboard() {
     approveCompany: approveCompanyAction,
     registerCompany,
     editCompany,
-    getCompanyByAdminId,
     deleteCompany,
-    currentCompany,
   } = useCompanyStore();
 
   // Local state
@@ -194,14 +194,14 @@ export default function CompanyManagementDashboard() {
   const pendingCompaniesCount = companies.filter((c) => !c.isApproved).length;
 
   return (
-    <div className="bg-gray-50 min-h-screen p-6">
+    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Company Management
           </h1>
           <button
-            className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700 transition"
+            className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700 dark:hover:bg-blue-800 transition"
             onClick={() => setShowAddCompanyModal(true)}
           >
             <PlusCircle size={18} />
@@ -211,50 +211,52 @@ export default function CompanyManagementDashboard() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-medium text-gray-700">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300">
               Total Companies
             </h3>
-            <p className="text-3xl font-bold mt-2">{companies.length}</p>
+            <p className="text-3xl font-bold mt-2 dark:text-white">
+              {companies.length}
+            </p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-medium text-gray-700">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300">
               Approved Companies
             </h3>
-            <p className="text-3xl font-bold mt-2 text-green-600">
+            <p className="text-3xl font-bold mt-2 text-green-600 dark:text-green-400">
               {approvedCompaniesCount}
             </p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-medium text-gray-700">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300">
               Pending Approval
             </h3>
-            <p className="text-3xl font-bold mt-2 text-amber-600">
+            <p className="text-3xl font-bold mt-2 text-amber-600 dark:text-amber-400">
               {pendingCompaniesCount}
             </p>
           </div>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white p-4 rounded-lg shadow mb-6">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow mb-6">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="relative flex-grow">
               <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"
                 size={18}
               />
               <input
                 type="text"
                 placeholder="Search companies by name..."
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-white dark:bg-gray-700 dark:text-white"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-gray-600">Status:</span>
+              <span className="text-gray-600 dark:text-gray-400">Status:</span>
               <select
-                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-white dark:bg-gray-700 dark:text-white"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -268,25 +270,25 @@ export default function CompanyManagementDashboard() {
 
         {/* Error Display */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-6">
             <p>{error}</p>
           </div>
         )}
 
         {/* Companies Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           {loading ? (
             <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
                       onClick={() => toggleSort("name")}
                     >
                       <div className="flex items-center space-x-1">
@@ -296,7 +298,7 @@ export default function CompanyManagementDashboard() {
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
                       onClick={() => toggleSort("isApproved")}
                     >
                       <div className="flex items-center space-x-1">
@@ -306,7 +308,7 @@ export default function CompanyManagementDashboard() {
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
                       onClick={() => toggleSort("createdAt")}
                     >
                       <div className="flex items-center space-x-1">
@@ -316,24 +318,24 @@ export default function CompanyManagementDashboard() {
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                     >
                       Stats
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                     >
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {sortedCompanies.length === 0 ? (
                     <tr>
                       <td
                         colSpan={5}
-                        className="px-6 py-4 text-center text-gray-500"
+                        className="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
                       >
                         {searchQuery
                           ? "No companies matching your search criteria"
@@ -342,28 +344,31 @@ export default function CompanyManagementDashboard() {
                     </tr>
                   ) : (
                     sortedCompanies.map((company) => (
-                      <tr key={company.id} className="hover:bg-gray-50">
+                      <tr
+                        key={company.id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                      >
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
                             {company.name || "N/A"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {company.isApproved ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                               Approved
                             </span>
                           ) : (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
                               Pending
                             </span>
                           )}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                           {formatDate(company.createdAt, company.timezone)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex space-x-3 text-xs text-gray-500">
+                          <div className="flex space-x-3 text-xs text-gray-500 dark:text-gray-400">
                             <div className="flex items-center">
                               <Users size={14} className="mr-1" />
                               <span>{company._count?.customers || 0}</span>
@@ -383,7 +388,7 @@ export default function CompanyManagementDashboard() {
                             {!company.isApproved && (
                               <button
                                 onClick={() => handleApproveCompany(company.id)}
-                                className="text-green-600 hover:text-green-900"
+                                className="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300"
                                 title="Approve Company"
                               >
                                 <CheckCircle size={18} />
@@ -391,14 +396,14 @@ export default function CompanyManagementDashboard() {
                             )}
                             <button
                               onClick={() => handleEditClick(company)}
-                              className="text-blue-600 hover:text-blue-900"
+                              className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
                               title="Edit Company"
                             >
                               <Edit size={18} />
                             </button>
                             <button
                               onClick={() => handleDeleteClick(company.id)}
-                              className="text-red-600 hover:text-red-900"
+                              className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
                               title="Delete Company"
                             >
                               <Trash2 size={18} />
@@ -407,7 +412,7 @@ export default function CompanyManagementDashboard() {
                               onClick={() =>
                                 handleViewCompanyDetails(company.id)
                               }
-                              className="text-gray-600 hover:text-gray-900"
+                              className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
                               title="View Details"
                             >
                               <MoreHorizontal size={18} />
@@ -426,14 +431,14 @@ export default function CompanyManagementDashboard() {
         {/* Add Company Modal */}
         {showAddCompanyModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
                   Add New Company
                 </h3>
                 <button
                   onClick={() => setShowAddCompanyModal(false)}
-                  className="text-gray-400 hover:text-gray-500"
+                  className="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400"
                 >
                   <XCircle size={20} />
                 </button>
@@ -449,14 +454,14 @@ export default function CompanyManagementDashboard() {
                 <div>
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
                     Company Name
                   </label>
                   <input
                     type="text"
                     id="name"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                     value={newCompany.name}
                     onChange={(e) =>
                       setNewCompany({ ...newCompany, name: e.target.value })
@@ -467,13 +472,13 @@ export default function CompanyManagementDashboard() {
                 <div>
                   <label
                     htmlFor="timezone"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
                     Timezone
                   </label>
                   <select
                     id="timezone"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                     value={newCompany.timezone}
                     onChange={(e) =>
                       setNewCompany({ ...newCompany, timezone: e.target.value })
@@ -490,7 +495,7 @@ export default function CompanyManagementDashboard() {
                   <input
                     type="checkbox"
                     id="approved"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600"
                     checked={newCompany.isApproved}
                     onChange={(e) =>
                       setNewCompany({
@@ -501,7 +506,7 @@ export default function CompanyManagementDashboard() {
                   />
                   <label
                     htmlFor="approved"
-                    className="ml-2 block text-sm text-gray-900"
+                    className="ml-2 block text-sm text-gray-900 dark:text-gray-300"
                   >
                     Approve Immediately
                   </label>
@@ -509,14 +514,14 @@ export default function CompanyManagementDashboard() {
                 <div className="flex justify-end space-x-3 pt-4">
                   <button
                     type="button"
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                     onClick={() => setShowAddCompanyModal(false)}
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-blue-600 dark:bg-blue-700 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={isRegistering || !newCompany.name}
                   >
                     {isRegistering ? (
@@ -556,14 +561,14 @@ export default function CompanyManagementDashboard() {
         {/* Edit Company Modal */}
         {showEditCompanyModal && selectedCompany && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
                   Edit Company
                 </h3>
                 <button
                   onClick={() => setShowEditCompanyModal(false)}
-                  className="text-gray-400 hover:text-gray-500"
+                  className="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400"
                 >
                   <XCircle size={20} />
                 </button>
@@ -572,14 +577,14 @@ export default function CompanyManagementDashboard() {
                 <div>
                   <label
                     htmlFor="edit-name"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
                     Company Name
                   </label>
                   <input
                     type="text"
                     id="edit-name"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                     value={selectedCompany.name || ""}
                     onChange={(e) =>
                       setSelectedCompany({
@@ -593,13 +598,13 @@ export default function CompanyManagementDashboard() {
                 <div>
                   <label
                     htmlFor="edit-timezone"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
                     Timezone
                   </label>
                   <select
                     id="edit-timezone"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                     value={selectedCompany.timezone || "UTC"}
                     onChange={(e) =>
                       setSelectedCompany({
@@ -619,7 +624,7 @@ export default function CompanyManagementDashboard() {
                   <input
                     type="checkbox"
                     id="edit-approved"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600"
                     checked={selectedCompany.isApproved || false}
                     onChange={(e) =>
                       setSelectedCompany({
@@ -630,7 +635,7 @@ export default function CompanyManagementDashboard() {
                   />
                   <label
                     htmlFor="edit-approved"
-                    className="ml-2 block text-sm text-gray-900"
+                    className="ml-2 block text-sm text-gray-900 dark:text-gray-300"
                   >
                     Approved
                   </label>
@@ -638,14 +643,14 @@ export default function CompanyManagementDashboard() {
                 <div className="flex justify-end space-x-3 pt-4">
                   <button
                     type="button"
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                     onClick={() => setShowEditCompanyModal(false)}
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="px-4 py-2 bg-blue-600 dark:bg-blue-700 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     Save Changes
                   </button>
@@ -658,12 +663,12 @@ export default function CompanyManagementDashboard() {
         {/* Delete Confirmation Modal */}
         {showDeleteConfirmation && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
               <div className="mb-4">
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
                   Confirm Deletion
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   Are you sure you want to delete this company? This action
                   cannot be undone.
                 </p>
@@ -671,14 +676,14 @@ export default function CompanyManagementDashboard() {
               <div className="flex justify-end space-x-3">
                 <button
                   type="button"
-                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                   onClick={() => setShowDeleteConfirmation(false)}
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  className="px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  className="px-4 py-2 bg-red-600 dark:bg-red-700 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700 dark:hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                   onClick={handleDeleteCompany}
                 >
                   Delete

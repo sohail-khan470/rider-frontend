@@ -6,6 +6,7 @@ import { Company } from "../types/company.types";
 import { CompanyAdmin } from "../types/company-admin.types";
 import { Staff } from "../types/staff.types";
 import { Customer } from "../types/customer.types";
+import { register } from "module";
 
 export const authApi = {
   login: async (email: string, password: string): Promise<any> => {
@@ -15,6 +16,13 @@ export const authApi = {
     });
 
     return response.data.data;
+  },
+
+  registerAdmin: async (
+    data: Omit<CompanyAdmin, "id">
+  ): Promise<SuperAdmin> => {
+    const response = await apiClient.post("/auth/signup", data);
+    return response.data;
   },
 
   superAdminProfile: async (): Promise<SuperAdmin> => {

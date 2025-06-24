@@ -14,7 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "react-toastify";
-import { useCompanyStore } from "../../stores";
+import { useCompanyStore, useAuthStore } from "../../stores";
 
 // Types matching your Prisma schema
 interface CompanyAddress {
@@ -129,6 +129,12 @@ const CompanyDashboard: React.FC = () => {
     updateCompanyProfile,
     editCompany,
   } = useCompanyStore();
+
+  const { user } = useAuthStore();
+
+  if (user) {
+    console.log(user.permissions);
+  }
 
   const [currentView, setCurrentView] = useState<"view" | "edit">("view");
   const [isLoading, setIsLoading] = useState(false);
@@ -365,13 +371,23 @@ const CompanyDashboard: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <button
+              {/* <button
                 onClick={() => setCurrentView("edit")}
                 className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition-colors"
               >
                 <Edit className="w-4 h-4" />
                 <span>Edit Company</span>
-              </button>
+              </button> */}
+              {/* Replace the existing button with this conditional one */}
+              {user && user.permissions.includes("EDIT_COMPANY") && (
+                <button
+                  onClick={() => setCurrentView("edit")}
+                  className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  <Edit className="w-4 h-4" />
+                  <span>Edit Company</span>
+                </button>
+              )}
             </div>
           </div>
 

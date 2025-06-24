@@ -22,6 +22,7 @@ import NotificationsPage from "../pages/Notifications/NotificationsPage";
 import LocationManagement from "../pages/LocationManagement/LocationManagement";
 import CustomerManagement from "../pages/CustomerManagement/CustomerManagement";
 import SchedulePage from "../pages/ScheduleManagement/SchedulePage";
+import AdminManagement from "../pages/AdminManagement/AdminManagement";
 
 export const RouterConfig = () => {
   return (
@@ -55,6 +56,7 @@ export const RouterConfig = () => {
               path="/company-management"
               element={<CompanyManagementDashboard />}
             />
+            <Route path="/admin-management" element={<AdminManagement />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/form-elements" element={<FormElements />} />
             <Route path="/alerts" element={<Alerts />} />
@@ -62,7 +64,7 @@ export const RouterConfig = () => {
         </Route>
 
         {/* Company Admin Routes */}
-        <Route element={<RoleRoute type={["ADMIN"]} />}>
+        <Route element={<RoleRoute type={["ADMIN", "MANAGER", "OPERATOR"]} />}>
           <Route element={<AppLayout />}>
             <Route path="/company/home" element={<CompanyDashboard />} />
             <Route path="/company/profile" element={<UserProfiles />} />
@@ -81,7 +83,11 @@ export const RouterConfig = () => {
         </Route>
       </Route>
       <Route element={<ProtectedRoute />}>
-        <Route element={<RoleRoute type={["ADMIN", "super_admin"]} />}>
+        <Route
+          element={
+            <RoleRoute type={["ADMIN", "super_admin", "MANAGER", "OPERATOR"]} />
+          }
+        >
           <Route element={<AppLayout />}>
             <Route path="/company/drivers" element={<DriverManagement />} />
             <Route

@@ -25,7 +25,8 @@ export const superAdminApi = {
   },
 
   getStatistics: async (): Promise<any> => {
-    const response = await apiClient.get("/super-admin/stats");
+    const response = await apiClient.get("/dashboard-stats");
+    console.log(response);
     return response.data;
   },
 };

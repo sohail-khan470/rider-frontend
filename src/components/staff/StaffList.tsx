@@ -5,7 +5,7 @@ import { useState } from "react";
 import { staffApi } from "../../api/endpoints/staffApi";
 import { Staff, StaffFormValues } from "./types";
 
-export default function StaffList() {
+export default function StaffList({ adminAccess }: { adminAccess: boolean }) {
   const { staff, selectedStaff, selectStaff, clearSelectedStaff } =
     useStaffStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,9 +38,11 @@ export default function StaffList() {
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
               Role
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
-              Actions
-            </th>
+            {adminAccess && (
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                Actions
+              </th>
+            )}
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
@@ -58,14 +60,16 @@ export default function StaffList() {
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300 capitalize">
                 {staffMember.role.name.replace("_", " ")}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button
-                  onClick={() => handleEdit(staffMember)}
-                  className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
-                >
-                  <PencilIcon className="h-5 w-5" />
-                </button>
-              </td>
+              {adminAccess && (
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <button
+                    onClick={() => handleEdit(staffMember)}
+                    className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
+                  >
+                    <PencilIcon className="h-5 w-5" />
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

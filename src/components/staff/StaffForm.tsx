@@ -57,8 +57,8 @@ export function StaffForm({
     // Only validate password if it's not in defaultValues (edit mode)
     if (!defaultValues.password && !formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password && formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } else if (formData.password && formData.password.length < 5) {
+      newErrors.password = "Password must be at least 5 characters";
     }
 
     if (!formData.roleId) newErrors.roleId = "Role is required";
