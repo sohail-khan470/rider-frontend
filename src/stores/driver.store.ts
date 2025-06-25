@@ -101,9 +101,11 @@ export const useDriverStore = create<DriverState & DriverActions>()(
     createDriver: async (driverData: CreateDriverData) => {
       set({ loading: true, error: null });
       try {
-        const driver = await driverApi.createDriver(driverData);
+        const driver = (await driverApi.createDriver(driverData)) as any;
+        console.log(driver);
+
         set((state) => {
-          state.drivers.unshift(driver);
+          state.drivers.unshift(driver.data);
           state.loading = false;
         });
         toast.success("Driver created successfully");

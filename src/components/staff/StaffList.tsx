@@ -6,7 +6,7 @@ import { staffApi } from "../../api/endpoints/staffApi";
 import { Staff, StaffFormValues } from "./types";
 
 export default function StaffList({ adminAccess }: { adminAccess: boolean }) {
-  const { staff, selectedStaff, selectStaff, clearSelectedStaff } =
+  const { staff, selectedStaff, selectStaff, clearSelectedStaff, updateStaff } =
     useStaffStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -16,8 +16,9 @@ export default function StaffList({ adminAccess }: { adminAccess: boolean }) {
   };
 
   const handleUpdate = async (id: number, data: StaffFormValues) => {
+    console.log("Updating staff:", id, data);
     try {
-      await staffApi.updateStaff(id, data);
+      await updateStaff(id, data);
     } catch (error) {
       console.error("Error updating staff:", error);
       throw error;

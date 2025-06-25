@@ -69,9 +69,12 @@ export const useCustomerStore = create<CustomerState & CustomerActions>()(
     createCustomer: async (customerData) => {
       set({ loading: true, error: null });
       try {
-        const customer = await customerApi.createCustomer(customerData);
+        const customer = (await customerApi.createCustomer(
+          customerData
+        )) as any;
+        console.log(customer);
         set((state) => {
-          state.customers.push(customer);
+          state.customers.push(customer.data);
           state.loading = false;
         });
       } catch (error) {
@@ -121,7 +124,8 @@ export const useCustomerStore = create<CustomerState & CustomerActions>()(
     registerCustomer: async (customerData) => {
       set({ loading: true, error: null });
       try {
-        const customer = await customerApi.register(customerData);
+        const customer = (await customerApi.register(customerData)) as any;
+        console.log(customer);
         set({ currentCustomer: customer, loading: false });
       } catch (error) {
         set({ error: "Failed to register customer", loading: false });

@@ -33,8 +33,9 @@ export default function CompanyMetrics() {
   const activeDrivers = drivers?.active || 0;
 
   // Since recent bookings aren't in the console output, we'll use an empty array
-  const recentBookings = [];
+  const recentBookings = bookings.recent;
 
+  console.log(recentBookings);
   const metrics = [
     {
       label: "Total Companies",
@@ -79,13 +80,13 @@ export default function CompanyMetrics() {
       bgColor: "bg-red-50 dark:bg-red-900/20",
       borderColor: "border-red-200 dark:border-red-800",
     },
-    {
-      label: "Approved Currencies",
-      value: currencies?.approved || 0,
-      icon: <BoxIconLine className="text-teal-600 size-7 dark:text-teal-400" />,
-      bgColor: "bg-teal-50 dark:bg-teal-900/20",
-      borderColor: "border-teal-200 dark:border-teal-800",
-    },
+    // {
+    //   label: "Approved Currencies",
+    //   value: currencies?.approved || 0,
+    //   icon: <BoxIconLine className="text-teal-600 size-7 dark:text-teal-400" />,
+    //   bgColor: "bg-teal-50 dark:bg-teal-900/20",
+    //   borderColor: "border-teal-200 dark:border-teal-800",
+    // },
   ];
 
   return (
@@ -195,13 +196,13 @@ export default function CompanyMetrics() {
                       </tr>
                     </thead>
                     <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                      {bookings.recent.map((booking, idx) => (
+                      {recentBookings.map((booking, idx) => (
                         <tr
                           key={idx}
                           className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
                         >
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 text-center font-medium">
-                            {booking.company?.name || "N/A"}
+                            {booking.companyName || "N/A"}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300 text-center">
                             {booking.pickup}

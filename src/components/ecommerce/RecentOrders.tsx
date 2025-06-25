@@ -14,7 +14,6 @@ import { useCompanyStore } from "../../stores";
 
 export default function RecentOrders() {
   const { companies } = useCompanyStore();
-  console.log(companies);
 
   const tableData: Company[] = useCompanyStore(
     (state) => state.companies

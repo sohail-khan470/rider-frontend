@@ -83,11 +83,7 @@ export const RouterConfig = () => {
         </Route>
       </Route>
       <Route element={<ProtectedRoute />}>
-        <Route
-          element={
-            <RoleRoute type={["ADMIN", "super_admin", "MANAGER", "OPERATOR"]} />
-          }
-        >
+        <Route element={<RoleRoute type={["ADMIN", "MANAGER", "OPERATOR"]} />}>
           <Route element={<AppLayout />}>
             <Route path="/company/drivers" element={<DriverManagement />} />
             <Route
