@@ -24,8 +24,8 @@ A React-based web application for managing companies, drivers, and customers wit
 
 ### Backend
 
-- RESTful API (not included in this frontend repository)
-- WebSocket integration
+- RESTful API (Nodejs,express,prisma,mysql)
+- 
 
 ## Project Structure
 
