@@ -1,52 +1,59 @@
-Project Overview
+# Rider Frontend
 
-This is a React-based web application for managing companies, drivers, and customers. The project utilizes various libraries and frameworks, including React, React Router, Zustand, and Tailwind CSS.
+A React-based web application for managing companies, drivers, and customers with real-time capabilities.
 
-Features
+## Features
 
-Company Management: The application allows administrators to manage companies, including creating, editing, and deleting companies.
-Driver Management: The application enables the management of drivers, including creating, editing, and deleting driver profiles.
-Customer Management: The application provides features for managing customers, including creating, editing, and deleting customer profiles.
-Scheduling: The application includes a scheduling feature for managing driver schedules and assignments.
-Real-time Updates: The application uses WebSockets to provide real-time updates on company, driver, and customer data.
-Technical Details
+- **Company Management**: Create, edit, and delete company profiles
+- **Driver Management**: Manage driver profiles including creation, editing, and deletion
+- **Customer Management**: Handle customer profiles with full CRUD operations
+- **Scheduling**: Manage driver schedules and assignments
+- **Real-time Updates**: WebSocket integration for live data updates
 
-Frontend: The application uses React as the frontend framework, with Redux for state management and React Router for client-side routing.
-Backend: The application uses a RESTful API (not shown in the provided code snippets) to interact with the database.
-Database: The application uses a database (not specified in the provided code snippets) to store company, driver, and customer data.
-Libraries and Frameworks: The application utilizes various libraries and frameworks, including:
-React
-React Router
-Zustand
-Tailwind CSS
-Lucide React (for icons)
-Moment.js (for date and time handling)
-JWT Decode (for token decoding)
-Project Structure
+## Technologies Used
 
-The project is organized into the following directories:
+### Frontend
 
-src: Contains the application's source code, including components, containers, and utilities.
-components: Contains reusable React components, such as buttons, forms, and tables.
-containers: Contains higher-level components that wrap around smaller components.
-pages: Contains page-level components that render specific routes.
-stores: Contains Zustand stores for managing application state.
-api: Contains API endpoints for interacting with the backend.
-utils: Contains utility functions for tasks such as date formatting and token decoding.
-Getting Started
+- React
+- React Router
+- Zustand (state management)
+- Tailwind CSS (styling)
+- Lucide React (icons)
+- Moment.js (date/time handling)
+- JWT Decode (token decoding)
 
-To get started with the project, follow these steps:
+### Backend
 
-Clone the repository: git clone https://github.com/sohail-khan470/rider-frontend
-Install dependencies: npm install or yarn install
-Start the development server: npm start or yarn start
-Open the application in your web browser: http://localhost:3000
-Contributing
+- RESTful API (not included in this frontend repository)
+- WebSocket integration
 
-Contributions are welcome! If you'd like to contribute to the project, please fork the repository and submit a pull request with your changes.
+## Project Structure
 
-License
+src/
+├── components/ # Reusable UI components
+├── containers/ # Higher-level component wrappers
+├── pages/ # Page-level route components
+├── stores/ # Zustand state management
+├── api/ # API endpoint definitions
+└── utils/ # Utility functions
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+## Getting Started
 
-Please note that this is a hypothetical README.md file, and you should modify it to better suit your project's specifics.
+Follow these steps to set up the project locally:
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/sohail-khan470/rider-frontend
+
+   ```
+
+2. **Install dependencies**
+
+   bash/command-line
+   npm install
+
+3. **Start the development server**
+
+   bash/command-line
+   npm run dev
