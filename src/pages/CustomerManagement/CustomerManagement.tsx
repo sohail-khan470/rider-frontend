@@ -23,8 +23,8 @@ export interface Customer {
   email: string;
   phone: string;
   companyId: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 const CustomerManagement = () => {

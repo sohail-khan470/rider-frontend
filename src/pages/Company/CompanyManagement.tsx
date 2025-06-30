@@ -60,7 +60,7 @@ export default function CompanyManagementDashboard() {
       await approveCompanyAction(id);
       toast.success("Company approved successfully!");
       fetchAllCompanies();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error approving company:", error);
       toast.error(`Failed to approve company: ${error.message}`);
     }
@@ -75,7 +75,7 @@ export default function CompanyManagementDashboard() {
       setShowDeleteConfirmation(false);
       setCompanyToDelete(null);
       fetchAllCompanies();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting company:", error);
       toast.error(`Failed to delete company: ${error.message}`);
     }
@@ -98,7 +98,7 @@ export default function CompanyManagementDashboard() {
       });
       setShowAddCompanyModal(false);
       await fetchAllCompanies();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error registering company:", error);
       toast.error(`Failed to register company: ${error.message}`);
     } finally {
@@ -135,7 +135,7 @@ export default function CompanyManagementDashboard() {
       setShowEditCompanyModal(false);
       setSelectedCompany(null);
       await fetchAllCompanies();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating company:", error);
       toast.error(`Failed to update company: ${error.message}`);
     }

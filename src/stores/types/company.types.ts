@@ -4,8 +4,8 @@ export interface Company {
   _count?: any;
   profile?: any;
   contact?: any;
-  addresses: boolean;
-  updatedAt(updatedAt?: any): import("react").ReactNode;
+  addresses: [] | any;
+  updatedAt: string | Date;
   id: number;
   name: string;
   email: string;

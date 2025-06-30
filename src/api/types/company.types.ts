@@ -7,6 +7,7 @@ export interface Company {
   isApproved: boolean;
   createdAt: string;
   timezone: string;
+  contact?: any;
 }
 
 export interface CompanyAdmin {

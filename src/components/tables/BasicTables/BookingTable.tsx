@@ -17,7 +17,7 @@ export default function BookingTable() {
   };
 
   // Helper function to format fare
-  const formatFare = (fare: number | null) => {
+  const formatFare = (fare: number | null | undefined) => {
     return fare ? `$${fare.toFixed(2)}` : "N/A";
   };
 

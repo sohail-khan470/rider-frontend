@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useCompanyStore } from "../../stores";
 
 export default function CompanyProfileForm() {
-  const { currentCompany, getCompanyProfile } = useCompanyStore();
+  const { getCompanyProfile } = useCompanyStore();
 
   useEffect(() => {
     getCompanyProfile();

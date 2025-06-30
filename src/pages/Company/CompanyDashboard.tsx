@@ -8,8 +8,6 @@ import {
   Users,
   Car,
   Calendar,
-  FileText,
-  Image,
   Save,
   X,
 } from "lucide-react";
@@ -126,7 +124,6 @@ const CompanyDashboard: React.FC = () => {
     loading: storeLoading,
     error: storeError,
     getCompanyProfile,
-    updateCompanyProfile,
     editCompany,
   } = useCompanyStore();
 
@@ -343,9 +340,9 @@ const CompanyDashboard: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-300 dark:border-gray-700 p-6 mb-6">
             <div className="flex justify-between items-start">
               <div className="flex items-center space-x-4">
-                {company.media?.find((m) => m.type === "LOGO") && (
+                {company.media?.find((m: any) => m.type === "LOGO") && (
                   <img
-                    src={company.media.find((m) => m.type === "LOGO")?.url}
+                    src={company.media.find((m: any) => m.type === "LOGO")?.url}
                     alt="Company Logo"
                     className="w-16 h-16 rounded-lg object-cover"
                   />

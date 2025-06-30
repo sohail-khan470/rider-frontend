@@ -196,7 +196,7 @@ export default function CompanyMetrics() {
                       </tr>
                     </thead>
                     <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                      {recentBookings.map((booking, idx) => (
+                      {recentBookings.map((booking: any, idx: number) => (
                         <tr
                           key={idx}
                           className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"

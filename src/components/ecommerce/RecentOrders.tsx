@@ -13,8 +13,6 @@ import { useCompanyStore } from "../../stores";
 // Define the table data using the interface
 
 export default function RecentOrders() {
-  const { companies } = useCompanyStore();
-
   const tableData: Company[] = useCompanyStore(
     (state) => state.companies
   ) as any;
